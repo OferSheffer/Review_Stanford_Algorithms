@@ -92,12 +92,28 @@ def Sort_and_Count(A, n, start_index=0):
         z=Merge_and_CountSplitInv(A,start_index,len_1st,len_2nd)
     return x+y+z
 
+def basic_test():
+    assertTrue(Sort_and_Count([1],len([1]), 0)
+    # small array (even length) test A=[1,3,5,2,4,6] passes
+    # small array (odd length, duplicate value) test A=[1,3,5,2,4,6,3] passes 
+    # print(Sort_and_Count(A,len(A)))
+    
+
 
 if __name__ == '__main__':
     
-    # base test A=[1] passes
-    # small array (even length) test A=[1,3,5,2,4,6] passes
-    # small array (odd length, duplicate value) test A=[1,3,5,2,4,6,3] passes 
-     A=[1,3,5,2,4,6,3]
     
-    print(Sort_and_Count(A,len(A)))
+    
+    #TODO: working with argv to accept file input
+    if len(sys.argv) > 2:
+        sys.exit("Usage: inv_count <file_name> (leave empty for testing)")
+        return 1
+    elif len(sys.argv) == 1:
+        basic_test()
+    # else: argv == 2
+    
+    #TODO: take values from file and run sort_and_count
+        
+    
+    
+    
