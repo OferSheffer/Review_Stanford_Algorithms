@@ -39,7 +39,43 @@ def Merge_and_CountSplitInv(A,start_index,len_1st,len_2nd):
     Output: inversions (values where i<j, but A[i]>A[j])
     Side Effect: two consecutive A subsections are sorted.
     """
-    pass
+    inversions=0
+    temp_array=[]
+    index_1st=start_index
+    index_2nd=start_index+len_1st
+
+    #while both indices are in range
+    while (index_1st < start_index+len_1st) and
+          (index_2nd < start_index+len_1st+len_2nd):
+        
+        #place smaller value in temp_array, increase inversions 
+        if A[index_1st]<A[index_2nd]:
+            temp_array.append(A[index_1st])
+            index_1st += 1
+        else:
+            temp_array.append(A[index_2nd])
+            index_2nd += 1
+            inversions+=(start_index+len_1st-index_1st)
+    
+    #one index is out of range:
+    if index_2nd == start_index+len_1st+len_2nd: # 2nd index complete
+        #add leftover 1st half values to temp_array
+        #before destroying them by the write process.
+        temp_array.extend(A[index_1st:start_index+len_1st])
+    else: # 1st index complete
+        pass #no need to write over leftovers in 2nd sub-array
+         
+    #write temp_array over A[start_index:start_index+len(temp_array)]
+    write_index=start_index
+    for value in temp_array:
+        A[write_index]=value
+        write_index +=1
+    
+    return inversions
+    
+        
+        
+
 
 def Sort_and_Count(A, n, start_index=0):
     """
