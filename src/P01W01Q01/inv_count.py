@@ -28,6 +28,8 @@ Python TimeComplexity:
  set item - good idea. O(1)
 '''
 
+
+
 def Sort_and_Count(A, n, start_index=0):
     """
     Input: array A, length n, start_index(default=0)
@@ -36,11 +38,12 @@ def Sort_and_Count(A, n, start_index=0):
     """
     if n=1, return 0    # base case, array of length 1
     else
-        x=Sort_and_Count(A, n/2, start_index)           # Input 1st half of A
-        y=Sort_and_Count(A, n/2+n%2, start_index+n/2)   # Input 2nd half of A
-        
-        z=Merge_and_CountSplitInv(B,C,n)    # sorted 1st and 2nd halves
-        
+        # Input: 1st and 2nd halves of current subarray
+        dimo=divmod(n,2)
+        x=Sort_and_Count(A, dimo[0], start_index)           
+        y=Sort_and_Count(A, dimo[0]+dimo[1], start_index+dimo[0])
+        # merge the (newly sorted) half-sized subarrays
+        z=Merge_and_CountSplitInv(A,start_index,dimo)
     return x+y+z
 
 
