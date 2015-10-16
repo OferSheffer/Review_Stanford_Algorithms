@@ -28,13 +28,15 @@ Python TimeComplexity:
  set item - good idea. O(1)
 '''
 
-def Merge_and_CountSplitInv(A,start_index,dimo):
+def Merge_and_CountSplitInv(A,start_index,len_1st,len_2nd):
     """
-    Merges two similar length presorted sub-slices of A while counting inversions.
+    Merges two similar length pre-sorted sub-slices of array A while counting
+    inversions.
+    
     Input: 
     array A, start_index (location of first sub-slice)
-    dimo (tuple with (length/2, length/2+length%2)).
-    Output: invesrtions (values where i<j, but A[i]>A[j])
+    len_1st,len_2nd (subslice_lengths).
+    Output: inversions (values where i<j, but A[i]>A[j])
     Side Effect: two consecutive A subsections are sorted.
     """
     pass
@@ -46,14 +48,15 @@ def Sort_and_Count(A, n, start_index=0):
     Side Effect: A is sorted.
     """
     if n=1, return 0    # base case, array of length 1
-    else
-        # Input: 1st and 2nd halves of current subarray
-        dimo=divmod(n,2)
-        x=Sort_and_Count(A, dimo[0], start_index)           
-        y=Sort_and_Count(A, dimo[0]+dimo[1], start_index+dimo[0])
-        # merge the (newly sorted) half-sized subarrays
-        z=Merge_and_CountSplitInv(A,start_index,dimo)
-    return x+y+z
+        else
+            # Input: 1st and 2nd halves of current sub-array
+            len_1st=n/2
+            len_2nd=n/2+n%2
+            x=Sort_and_Count(A, len_1st, start_index)           
+            y=Sort_and_Count(A, len_2nd, start_index+len_1st)
+            # merge the (newly sorted) half-sized sub-arrays
+            z=Merge_and_CountSplitInv(A,start_index,len_1st,len_2nd)
+        return x+y+z
 
 
 if __name__ == '__main__':
