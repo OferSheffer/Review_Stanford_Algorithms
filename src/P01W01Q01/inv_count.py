@@ -28,7 +28,16 @@ Python TimeComplexity:
  set item - good idea. O(1)
 '''
 
-
+def Merge_and_CountSplitInv(A,start_index,dimo):
+    """
+    Merges two similar length presorted sub-slices of A while counting inversions.
+    Input: 
+    array A, start_index (location of first sub-slice)
+    dimo (tuple with (length/2, length/2+length%2)).
+    Output: invesrtions (values where i<j, but A[i]>A[j])
+    Side Effect: two consecutive A subsections are sorted.
+    """
+    pass
 
 def Sort_and_Count(A, n, start_index=0):
     """
