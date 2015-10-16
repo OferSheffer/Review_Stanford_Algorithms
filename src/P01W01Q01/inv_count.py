@@ -74,9 +74,6 @@ def Merge_and_CountSplitInv(A,start_index,len_1st,len_2nd):
     return inversions
     
         
-        
-
-
 def Sort_and_Count(A, n, start_index=0):
     """
     Input: array A, length n, start_index(default=0)
