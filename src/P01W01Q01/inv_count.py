@@ -49,7 +49,7 @@ def Merge_and_CountSplitInv(A,start_index,len_1st,len_2nd):
           (index_2nd < start_index+len_1st+len_2nd)):
         
         #place smaller value in temp_array, increase inversions 
-        if A[index_1st]<A[index_2nd]:
+        if A[index_1st]<=A[index_2nd]:
             temp_array.append(A[index_1st])
             index_1st += 1
         else:
@@ -84,8 +84,8 @@ def Sort_and_Count(A, n, start_index=0):
         return 0    # base case, array of length 1
     else:
         # Input: 1st and 2nd halves of current sub-array
-        len_1st=n/2
-        len_2nd=n/2+n%2
+        len_1st=n//2
+        len_2nd=n//2+n%2
         x=Sort_and_Count(A, len_1st, start_index)           
         y=Sort_and_Count(A, len_2nd, start_index+len_1st)
         # merge the (newly sorted) half-sized sub-arrays
@@ -94,5 +94,10 @@ def Sort_and_Count(A, n, start_index=0):
 
 
 if __name__ == '__main__':
-    A=[1,3,5,2,4,6]
+    
+    # base test A=[1] passes
+    # small array (even length) test A=[1,3,5,2,4,6] passes
+    # small array (odd length, duplicate value) test A=[1,3,5,2,4,6,3] passes 
+     A=[1,3,5,2,4,6,3]
+    
     print(Sort_and_Count(A,len(A)))
