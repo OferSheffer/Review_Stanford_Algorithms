@@ -117,9 +117,9 @@ class TestSort_and_Count(unittest.TestCase):
 def main(file_name):
     #TODO: take values from file and run sort_and_count
     with open(file_name) as fh:
-#         if _debug:
-#             fh.readline()  # get rid of first answer line from debug file
-        A = [map(int, [line.strip() for line in fh])]
+        if file_name[:4] == 'test':
+            print(fh.readline())  # get rid of first answer line from debug file
+        A = list(map(int, [line.strip() for line in fh]))
         print(Sort_and_Count(A,len(A)))
     
     
