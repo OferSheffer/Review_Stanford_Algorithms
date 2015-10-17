@@ -112,13 +112,15 @@ class TestSort_and_Count(unittest.TestCase):
         C=[1,3,5,2,4,6,3]
         res3 = Sort_and_Count(C,len(C))  # odd length, duplicate value
         self.assertEqual(res3, 6)
-        
-        # print(Sort_and_Count(A,len(A)))
 
 
 def main(file_name):
     #TODO: take values from file and run sort_and_count
-    pass
+    with open(file_name) as fh:
+#         if _debug:
+#             fh.readline()  # get rid of first answer line from debug file
+        A = [map(int, [line.strip() for line in fh])]
+        print(Sort_and_Count(A,len(A)))
     
     
 if __name__ == '__main__':
@@ -127,10 +129,8 @@ if __name__ == '__main__':
     if len(sys.argv) > 2:
         sys.exit("Usage: inv_count <file_name> (leave empty for testing)")
     if len(sys.argv) == 1:
-        
+        print("No filename input, testing...")
         unittest.main()
-        
-    
     # else: argv == 2
     main(sys.argv[1])
     
