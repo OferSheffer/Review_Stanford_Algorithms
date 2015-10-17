@@ -28,6 +28,8 @@ Python TimeComplexity:
  set item - good idea. O(1)
 '''
 
+#TODO: if debug import unittest
+import unittest
 import sys
 
 
@@ -95,29 +97,42 @@ def Sort_and_Count(A, n, start_index=0):
         z=Merge_and_CountSplitInv(A,start_index,len_1st,len_2nd)
     return x+y+z
 
-def basic_test():
-    pass
-#assertTrue(Sort_and_Count([1],len([1]) == 0, "Failed basic_test single element array")
-    # small array (even length) test A=[1,3,5,2,4,6] passes
-    # small array (odd length, duplicate value) test A=[1,3,5,2,4,6,3] passes 
-    # print(Sort_and_Count(A,len(A)))
-    
+class TestSort_and_Count(unittest.TestCase):
+    """
+    Basic test class
+    """
 
+    def test_Sort_and_Count(self):
+        A=[1]
+        res1 = Sort_and_Count(A,len(A))  # single element
+        self.assertEqual(res1, 0)
+        B=[1,3,5,2,4,6]
+        res2 = Sort_and_Count(B,len(B))  # even length
+        self.assertEqual(res2, 3)
+        C=[1,3,5,2,4,6,3]
+        res3 = Sort_and_Count(C,len(C))  # odd length, duplicate value
+        self.assertEqual(res3, 6)
+        
+        # print(Sort_and_Count(A,len(A)))
+
+
+def main(file_name):
+    #TODO: take values from file and run sort_and_count
+    pass
+    
+    
 if __name__ == '__main__':
     
     #TODO: working with argv to accept file input
     if len(sys.argv) > 2:
         sys.exit("Usage: inv_count <file_name> (leave empty for testing)")
-        return 1
-    
     if len(sys.argv) == 1:
-        import unittest
-        basic_test()
+        
+        unittest.main()
+        
     
     # else: argv == 2
-    
-    #TODO: take values from file and run sort_and_count
-        
+    main(sys.argv[1])
     
     
     
