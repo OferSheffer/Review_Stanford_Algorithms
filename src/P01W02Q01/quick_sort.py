@@ -55,6 +55,20 @@ import sys
 
 # TODO: create pivot_factory method
 
+def Partition(A, l, r)
+# TODO
+    """
+    Array A, l Left boundary, r Right boundary
+    Input: A[l:r]
+    """
+    p = A[l]
+    i = l+1
+    for j=l+1 to r:
+        if A[j] < p:    # if A[j] > p, do nothing
+            swap A[j] and A[i] 
+            i += 1
+    swap A[l] and A[i-1]
+
 
 def quick_sort(A, length, pivot_factory=None):
     """
