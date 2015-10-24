@@ -32,7 +32,7 @@ import sys
 # TODO: if debug import unittest
 
 
-def Merge_and_CountSplitInv(A, start_index, len_1st, len_2nd):
+def merge_and_count_split_inv(A, start_index, len_1st, len_2nd):
     """
     Merges two similar length pre-sorted sub-slices of array A while counting
     inversions.
@@ -77,39 +77,42 @@ def Merge_and_CountSplitInv(A, start_index, len_1st, len_2nd):
     return inversions
 
 
-def Sort_and_Count(A, n, start_index=0):
+def sort_and_count(A, n, start_index=0):
     """
     Input: array A, length n, start_index(default=0)
     Output: inversions (values where i<j, but A[i]>A[j])
     Side Effect: A is sorted.
     """
-    if n == 1:
+    if n <= 1:
         return 0    # base case, array of length 1
     else:
         # Input: 1st and 2nd halves of current sub-array
         len_1st = n//2
         len_2nd = n//2+n % 2
-        x = Sort_and_Count(A, len_1st, start_index)
-        y = Sort_and_Count(A, len_2nd, start_index+len_1st)
+        x = sort_and_count(A, len_1st, start_index)
+        y = sort_and_count(A, len_2nd, start_index+len_1st)
         # merge the (newly sorted) half-sized sub-arrays
-        z = Merge_and_CountSplitInv(A, start_index, len_1st, len_2nd)
+        z = merge_and_count_split_inv(A, start_index, len_1st, len_2nd)
     return x+y+z
 
 
-class TestSort_and_Count(unittest.TestCase):
+class Test_sort_and_count(unittest.TestCase):
     """
     Basic test class
     """
 
-    def test_Sort_and_Count(self):
+    def test_sort_and_count(self):
+        A = []
+        res0 = sort_and_count(A, len(A))  # empty list input
+        self.assertEqual(res0, 0)
         A = [1]
-        res1 = Sort_and_Count(A, len(A))  # single element
+        res1 = sort_and_count(A, len(A))  # single element
         self.assertEqual(res1, 0)
         B = [1, 3, 5, 2, 4, 6]
-        res2 = Sort_and_Count(B,  len(B))  # even length
+        res2 = sort_and_count(B,  len(B))  # even length
         self.assertEqual(res2, 3)
         C = [1, 3, 5, 2, 4, 6, 3]
-        res3 = Sort_and_Count(C, len(C))  # odd length, duplicate value
+        res3 = sort_and_count(C, len(C))  # odd length, duplicate value
         self.assertEqual(res3, 6)
 
 
@@ -119,7 +122,7 @@ def main(file_name):
         if file_name[:4] == 'test':
             print(fh.readline())  # remove first answer line from debug file
         A = list(map(int, [line.strip() for line in fh]))
-        print(Sort_and_Count(A, len(A)))
+        print(sort_and_count(A, len(A)))
 
 
 if __name__ == '__main__':
