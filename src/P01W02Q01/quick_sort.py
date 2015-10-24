@@ -49,13 +49,12 @@ Python TimeComplexity:
 
 '''
 
-import unittest
 import sys
 # TODO: if debug import unittest
 
 # TODO: create pivot_factory method
 
-def Partition(A, l, r)
+def partition(A, l, r)
 # TODO
     """
     Array A, l Left boundary, r Right boundary
@@ -91,28 +90,6 @@ def quick_sort(A, length, pivot_factory=None):
     return x+y
 
 
-class Test_quick_sort(unittest.TestCase):
-    """
-    Basic test class
-    """
-
-    def test_quick_sort(self):
-        # TODO: fix basic test with proper assert values
-        # TODO: add pivot factory to tests
-        A = []
-        res0 = quick_sort(A, len(A))  # empty list input
-        self.assertEqual(res0, 0)
-        A = [1]
-        res1 = quick_sort(A, len(A))  # single element
-        self.assertEqual(res1, 0)
-        B = [1, 3, 5, 2, 4, 6]
-        res2 = quick_sort(B,  len(B))  # even length
-        self.assertEqual(res2, 3)
-        C = [1, 3, 5, 2, 4, 6, 3]
-        res3 = quick_sort(C, len(C))  # odd length, duplicate value
-        self.assertEqual(res3, 6)
-
-
 def main(file_name):
     # take values from file and run quick_sort
     with open(file_name) as fh:
@@ -128,6 +105,7 @@ if __name__ == '__main__':
         sys.exit("Usage: inv_count <file_name> (leave empty for testing)")
     if len(sys.argv) == 1:
         print("No filename input, testing...")
+        import test_quick_sort
         unittest.main()
     # else: argv == 2
     main(sys.argv[1])
