@@ -106,7 +106,7 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
     Output: comparisons (# of times elements were compared during sorting)
     Side Effect: A is sorted.
     """
-    if not end:
+    if end is None:
         end = len(A)
 
     n = end - start
@@ -157,7 +157,7 @@ class QuickSortTestCase(unittest.TestCase):
         self.assertEqual(B, [1, 2, 3, 5, 4])
         self.assertEqual(pivot_index, 1)
 
-        # TODO: make more tests
+        # TODO: more partition tests
 
     def test_quick_sort_with_basic_lists(self):
         """
@@ -165,28 +165,28 @@ class QuickSortTestCase(unittest.TestCase):
         with output = # of comparisons?
         """
 
-        # TODO:
-        return
-
         # TODO: fix basic test with proper assert values
         A = []
-        comp0 = quick_sort(A, len(A))  # empty list input
+        comp0 = quick_sort(A)  # empty list input
 
         self.assertEqual(A, [])
         self.assertEqual(comp0, 0)
 
         A = [1]
-        comp1 = quick_sort(A, len(A))  # single element
+        comp1 = quick_sort(A)  # single element
         self.assertEqual(A, [1])
         self.assertEqual(comp1, 0)
 
         B = [1, 3, 5, 2, 4, 6]
-        comp2 = quick_sort(B,  len(B))  # even length
+        comp2 = quick_sort(B)  # even length
         self.assertEqual(B, [1, 2, 3, 4, 5, 6])
         self.assertEqual(comp2, 3)  # expected comparisons for pivot = 1st
 
+        # TODO: remove return
+        return
+
         C = [1, 3, 5, 2, 4, 6, 3]
-        comp3 = quick_sort(C, len(C))  # odd length, duplicate value
+        comp3 = quick_sort(C)  # odd length, duplicate value
         self.assertEqual(C, [1, 2, 3, 3, 4, 5, 6])
         self.assertEqual(comp3, 6)
 
