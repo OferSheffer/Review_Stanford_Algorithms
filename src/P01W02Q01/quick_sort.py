@@ -92,9 +92,6 @@ class PivotDirector():
         return self._pivot_getter.get_pivot(*args)
 
 
-
-
-
 def swap(A, index_1, index_2):
     """swap between two members of array A"""
     if index_1 == index_2:
