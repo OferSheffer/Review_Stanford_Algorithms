@@ -196,8 +196,17 @@ class QuickSortTestCase(unittest.TestCase):
 
         C = [1, 3, 5, 2, 4, 6, 3]
         comp3 = quick_sort(C)  # odd length, duplicate value
+        """
+    '1' [1, 3, 5, 2, 4, 6, 3]  - 6 comparisons
+    '3'    [3, 5, 2, 4, 6, 3]  - 5 comparisons
+    '3'    [3, 2, 3, 4, 6, 5]  - partitioned
+    '3'    [3, 2]              - 1 comparison
+    '4'             [4, 6, 5]  - 2 comparisons
+    '6'                [6, 5]  - 1 comparisons
+                               - Total = 6+5+1+2+1=15
+        """
         self.assertEqual(C, [1, 2, 3, 3, 4, 5, 6])
-        self.assertEqual(comp3, 6)  # expected comparisons for pivot = 1st
+        self.assertEqual(comp3, 15)  # expected comparisons for pivot = 1st
 
     def test_with_pivots(self):
         # TODO: implement testing for all pivot types.
