@@ -51,6 +51,7 @@ Python TimeComplexity:
 
 import sys
 import unittest
+from copy import deepcopy
 
 class PivotMaker:
     pass
@@ -59,8 +60,9 @@ class PivotMaker:
 class PivotFirstElement(PivotMaker):
     """returns the first element as the pivot"""
 
-    def __init__(self, initial_pivot=0):
-        self._pivot = initial_pivot
+    def __init__(self, name="Question 1", pivoting_method="First Element"):
+        self._name = name
+        self._pivoting_method = pivoting_method
 
     def get_pivot(self, A, start, end):
         self._pivot = start
@@ -70,15 +72,15 @@ class PivotFirstElement(PivotMaker):
 class PivotLastElement(PivotMaker):
     """returns the first element as the pivot"""
 
-    def __init__(self, initial_pivot=0):
-        self._pivot = initial_pivot
+    def __init__(self, name="Question 2", pivoting_method="Last Element"):
+        self._name = name
+        self._pivoting_method = pivoting_method
 
     def get_pivot(self, A, start, end):
         self._pivot = end-1
         return self._pivot
 
 
-# TODO: create pivot_factory method
 class PivotDirector():
     """Director"""
     def __init__(self, pivot_getter):
@@ -90,6 +92,9 @@ class PivotDirector():
         Output: pivot_index
         """
         return self._pivot_getter.get_pivot(*args)
+
+    def get_pivot_maker_data(self):
+        return self._pivot_getter._name, self._pivot_getter._pivoting_method
 
 
 def swap(A, index_1, index_2):
@@ -134,12 +139,12 @@ def partition(A, start, end, pivot_index):
     return i-1
 
 
-def quick_sort(A, start=0, end=None, pivot_factory=None):
+def quick_sort(A, start=0, end=None, pivot_director=None):
     # TODO: test different types of input for this arg setup
     """
     Input:
     array A, start(default=0), end(if default=None := len(A))
-    pivot_factory - used to get_pivot() via external factory method.
+    pivot_director - used to get_pivot() via external factory method.
     Output: comparisons (# of times elements were compared during sorting)
     Side Effect: A is sorted.
     """
@@ -151,18 +156,18 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
         return 0    # base case, array of length 1 [or len(input)==0]
     else:
         # TODO:
-        # pivot_index = pivot_factory.get_pivot(A, start, end)
+        pivot_index = pivot_director.get_pivot(A, start, end)
 
         # first question: always choose pivot = 0 [first element]
-        pivot_index = start
+        # pivot_index = start
 
         # Partition A around pivot, fix comparison count
         comparisons = n-1
         pivot_index = partition(A, start, end, pivot_index)
 
         # Input: 1st and 2nd partitions of current sub-array
-        x = quick_sort(A, start, pivot_index, pivot_factory)
-        y = quick_sort(A, pivot_index+1, end, pivot_factory)
+        x = quick_sort(A, start, pivot_index, pivot_director)
+        y = quick_sort(A, pivot_index+1, end, pivot_director)
     return comparisons+x+y
 
 
@@ -256,7 +261,7 @@ def main(file_name):
     with open(file_name) as fh:
         if file_name[:4] == 'test':
             print((fh.readline()).strip())  # remove+show answer from test file
-        A = list(map(int, [line.strip() for line in fh]))
+        o_data = list(map(int, [line.strip() for line in fh]))
 
         # populate a dict with all possible PivotMakers
 #         m = sys.modules[__name__]
@@ -269,12 +274,18 @@ def main(file_name):
 #                 pivot_factories[module_attribute.name] = module_attribute
 
         pivot_factories = dict(
-                          q1=PivotFirstElement()  # ,
-                          # q2=PivotLastElement(),
+                          q1=PivotFirstElement(),
+                          q2=PivotLastElement()  # ,
                           # q3=PivotMedianElement()
                           )
-        for pf in pivot_factories.values():
-            print(quick_sort(A, pivot_factory=PivotDirector(pf)))
+
+        for _, pf in sorted(pivot_factories.items()):
+            A = deepcopy(o_data)
+            pd = PivotDirector(pf)
+            print("{1}, Pivoting Method: {2}, Comparisons: {0}".format(
+                            quick_sort(A, pivot_director=pd),
+                            *(pd.get_pivot_maker_data()))
+                  )
 
 
 if __name__ == '__main__':
