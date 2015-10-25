@@ -122,7 +122,7 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
 
 class QuickSortTestCase(unittest.TestCase):
     """Tests for `quick_sort.py`"""
-n
+
     def test_switch(self):
         A = [2, 3]
         swap(A, 0, 1)
