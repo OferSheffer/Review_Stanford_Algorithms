@@ -96,7 +96,7 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
     pivot_factory - used to get_pivot() via external factory method.
     Output: comparisons (# of times elements were compared during sorting)
     Side Effect: A is sorted.
-    """  
+    """
     if not end:
         end = len(A)
 
@@ -104,25 +104,25 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
     if n <= 1:
         return 0    # base case, array of length 1 [or len(input)==0]
     else:
-        # TODO
-        comparisons = 0
-        # p = pivot_factory.choose_pivot(A, length)
-        p = 0  # first question: always choose pivot = 0 [first element]
-        comparisons += start-end
-        # TODO: Partition A around p, fix comparison count
-        pivot_index = pivot_factory.get_pivot(A, start, end)
+        # TODO:
+        # pivot_index = pivot_factory.get_pivot(A, start, end)
 
+        # first question: always choose pivot = 0 [first element]
+        pivot_index = 0
 
+        # Partition A around pivot, fix comparison count
+        comparisons = n-1
+        pivot_index = partition(A, start, end, pivot_index)
 
         # Input: 1st and 2nd partitions of current sub-array
-        x = quick_sort(A, start, end, pivot_factory=None)
-        y = quick_sort(A, start, end, pivot_factory=None)
+        x = quick_sort(A, start, pivot_index, pivot_factory)
+        y = quick_sort(A, pivot_index+1, end, pivot_factory)
     return comparisons+x+y
 
 
 class QuickSortTestCase(unittest.TestCase):
     """Tests for `quick_sort.py`"""
-
+n
     def test_switch(self):
         A = [2, 3]
         swap(A, 0, 1)
