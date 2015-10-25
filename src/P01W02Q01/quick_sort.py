@@ -54,44 +54,83 @@ import unittest
 
 # TODO: create pivot_factory method
 
-def partition(A, l, r)
-    # TODO
+
+def swap(A, index_1, index_2):
+    """swap between two members of array A"""
+    if index_1 == index_2:
+        return
+    # else: index_1 != index_2
+    temp = A[index_2]
+    A[index_2] = A[index_1]
+    A[index_1] = temp
+
+
+def partition(A, start, end, pivot_index):
     """
-    Array A, l Left boundary, r Right boundary
-    Input: A[l:r]
+    Input: array A[start:end]
+    Output: index of pivot once partition is complete
+    Side effect:
+        A[start:end] is divided into:
+        "smaller than pivot","pivot","larger than pivot"
     """
-    p = A[l]
-    i = l+1
-    for j=l+1 to r:
-        if A[j] < p:    # if A[j] > p, do nothing
-            swap A[j] and A[i] 
+
+    # place pivot element at the start
+    swap(A, start, pivot_index)
+    pivot = A[start]
+
+    # partition (iterate over j, bucket 'smaller'/'larger'-than-pivot values)
+    i = start+1
+    for j in range(start+1, end):
+        if A[j] < pivot:    # if A[j] > p, do nothing
+            swap(A, j, i)
             i += 1
-    swap A[l] and A[i-1]
+    swap(A, start, i-1)
+    return i-1
 
 
-def quick_sort(A, length, pivot_factory=None):
+def quick_sort(A, start=0, end=None, pivot_factory=None):
+    # TODO: test different types of input for this arg setup
     """
-    Input: 
+    Input:
     array A, length n,      ??start_index(default=0)?? (consider)
     pivot_factory - used to get_pivot() via external factory method.
     Output: comparisons (# of times elements were compared during sorting)
     Side Effect: A is sorted.
-    """
+    """  
+    if not end:
+        end = len(A)
+
+    n = end - start
     if n <= 1:
         return 0    # base case, array of length 1 [or len(input)==0]
     else:
-        p = pivot_factory.choose_pivot(A, length)
-
+        # TODO
+        comparisons = 0
+        # p = pivot_factory.choose_pivot(A, length)
+        p = 0  # first question: always choose pivot = 0 [first element]
+        comparisons += start-end
         # TODO: Partition A around p, fix comparison count
+        pivot_index = pivot_factory.get_pivot(A, start, end)
+
+
 
         # Input: 1st and 2nd partitions of current sub-array
-        x = quick_sort(A, len_1st, start_index, pivot_factory=None)
-        y = quick_sort(A, len_1st, start_index, pivot_factory=None)
-    return x+y
+        x = quick_sort(A, start, end, pivot_factory=None)
+        y = quick_sort(A, start, end, pivot_factory=None)
+    return comparisons+x+y
 
 
 class QuickSortTestCase(unittest.TestCase):
     """Tests for `quick_sort.py`"""
+
+    def test_switch(self):
+        A = [2, 3]
+        swap(A, 0, 1)
+        self.assertEqual(A, [3, 2])
+
+    def test_partition(self):
+        A = []
+        # TODO: make a test
 
     def test_quick_sort_with_basic_lists(self):
         """
@@ -101,25 +140,25 @@ class QuickSortTestCase(unittest.TestCase):
 
         # TODO: fix basic test with proper assert values
         A = []
-        res0 = quick_sort(A, len(A))  # empty list input
+        comp0 = quick_sort(A, len(A))  # empty list input
 
         self.assertEqual(A, [])
-        self.assertEqual(res0, 0)
+        self.assertEqual(comp0, 0)
 
         A = [1]
-        res1 = quick_sort(A, len(A))  # single element
+        comp1 = quick_sort(A, len(A))  # single element
         self.assertEqual(A, [1])
-        self.assertEqual(res1, 0)
+        self.assertEqual(comp1, 0)
 
         B = [1, 3, 5, 2, 4, 6]
-        res2 = quick_sort(B,  len(B))  # even length
+        comp2 = quick_sort(B,  len(B))  # even length
         self.assertEqual(B, [1, 2, 3, 4, 5, 6])
-        self.assertEqual(res2, 3)
+        self.assertEqual(comp2, 3)  # expected comparisons for pivot = 1st
 
         C = [1, 3, 5, 2, 4, 6, 3]
-        res3 = quick_sort(C, len(C))  # odd length, duplicate value
+        comp3 = quick_sort(C, len(C))  # odd length, duplicate value
         self.assertEqual(C, [1, 2, 3, 3, 4, 5, 6])
-        self.assertEqual(res3, 6)
+        self.assertEqual(comp3, 6)
 
     def test_with_pivots(self):
         # TODO: implement testing for all pivot types.
