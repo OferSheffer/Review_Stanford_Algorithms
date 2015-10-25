@@ -67,6 +67,17 @@ class PivotFirstElement(PivotMaker):
         return self._pivot
 
 
+class PivotLastElement(PivotMaker):
+    """returns the first element as the pivot"""
+
+    def __init__(self, initial_pivot=0):
+        self._pivot = initial_pivot
+
+    def get_pivot(self, A, start, end):
+        self._pivot = end-1
+        return self._pivot
+
+
 # TODO: create pivot_factory method
 class PivotDirector():
     """Director"""
