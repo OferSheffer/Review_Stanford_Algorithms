@@ -52,7 +52,36 @@ Python TimeComplexity:
 import sys
 import unittest
 
+class PivotMaker:
+    pass
+
+
+class PivotFirstElement(PivotMaker):
+    """returns the first element as the pivot"""
+
+    def __init__(self, initial_pivot=0):
+        self._pivot = initial_pivot
+
+    def get_pivot(self, A, start, end):
+        self._pivot = start
+        return self._pivot
+
+
 # TODO: create pivot_factory method
+class PivotDirector():
+    """Director"""
+    def __init__(self, pivot_getter):
+        self._pivot_getter = pivot_getter
+
+    def get_pivot(self, *args):
+        """
+        get_pivot(A, start, end)
+        Output: pivot_index
+        """
+        return self._pivot_getter.get_pivot(*args)
+
+
+
 
 
 def swap(A, index_1, index_2):
@@ -101,7 +130,7 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
     # TODO: test different types of input for this arg setup
     """
     Input:
-    array A, length n,      ??start_index(default=0)?? (consider)
+    array A, start(default=0), end(if default=None := len(A))
     pivot_factory - used to get_pivot() via external factory method.
     Output: comparisons (# of times elements were compared during sorting)
     Side Effect: A is sorted.
@@ -220,7 +249,24 @@ def main(file_name):
         if file_name[:4] == 'test':
             print((fh.readline()).strip())  # remove+show answer from test file
         A = list(map(int, [line.strip() for line in fh]))
-        print(quick_sort(A, len(A)))
+
+        # populate a dict with all possible PivotMakers
+#         m = sys.modules[__name__]
+#         pivot_factories = {}
+#         for module_attribute_name in dir(m):
+#             module_attribute = getattr(m, module_attribute_name)
+#             if inspect.isclass(module_attribute) and
+#                 issubclass(module_attribute, PivotMaker) and
+#                 module_attribute != PivotMaker:
+#                 pivot_factories[module_attribute.name] = module_attribute
+
+        pivot_factories = dict(
+                          q1=PivotFirstElement()  # ,
+                          # q2=PivotLastElement(),
+                          # q3=PivotMedianElement()
+                          )
+        for pf in pivot_factories.values():
+            print(quick_sort(A, pivot_factory=PivotDirector(pf)))
 
 
 if __name__ == '__main__':

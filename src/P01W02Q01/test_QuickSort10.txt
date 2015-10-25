@@ -1,0 +1,11 @@
+Answer: first 25 last 29 median 21
+3
+9
+8
+4
+6
+10
+2
+5
+7
+1
