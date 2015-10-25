@@ -27,9 +27,8 @@ Python TimeComplexity:
  set item - good idea. O(1)
 '''
 
-import unittest
 import sys
-# TODO: if debug import unittest
+import unittest
 
 
 def merge_and_count_split_inv(A, start_index, len_1st, len_2nd):
@@ -96,23 +95,28 @@ def sort_and_count(A, n, start_index=0):
     return x+y+z
 
 
-class Test_sort_and_count(unittest.TestCase):
-    """
-    Basic test class
-    """
+class TestSortAndCount(unittest.TestCase):
+    """Basic test class"""
 
     def test_sort_and_count(self):
         A = []
         res0 = sort_and_count(A, len(A))  # empty list input
+        self.assertEqual(A, [])
         self.assertEqual(res0, 0)
+
         A = [1]
         res1 = sort_and_count(A, len(A))  # single element
+        self.assertEqual(A, [1])
         self.assertEqual(res1, 0)
+
         B = [1, 3, 5, 2, 4, 6]
         res2 = sort_and_count(B,  len(B))  # even length
+        self.assertEqual(B, [1, 2, 3, 4, 5, 6])
         self.assertEqual(res2, 3)
+
         C = [1, 3, 5, 2, 4, 6, 3]
         res3 = sort_and_count(C, len(C))  # odd length, duplicate value
+        self.assertEqual(C, [1, 2, 3, 3, 4, 5, 6])
         self.assertEqual(res3, 6)
 
 
@@ -120,13 +124,13 @@ def main(file_name):
     # take values from file and run sort_and_count
     with open(file_name) as fh:
         if file_name[:4] == 'test':
-            print(fh.readline())  # remove first answer line from debug file
+            print((fh.readline()).strip())  # remove+show answer from test file
         A = list(map(int, [line.strip() for line in fh]))
         print(sort_and_count(A, len(A)))
 
 
 if __name__ == '__main__':
-    # working with argv to accept file input
+    # TODO: gracefully fail on invalid input
     if len(sys.argv) > 2:
         sys.exit("Usage: inv_count <file_name> (leave empty for testing)")
     if len(sys.argv) == 1:
