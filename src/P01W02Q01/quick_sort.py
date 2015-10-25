@@ -73,7 +73,16 @@ def partition(A, start, end, pivot_index):
         A[start:end] is divided into:
         "smaller than pivot","pivot","larger than pivot"
     """
+    if end-start < 0:
+        raise ValueError
+    if not (start <= pivot_index <= end):
+        raise ValueError
 
+    # subarray with single or no elements
+    if end-start <= 1:
+        return start
+
+    # else: subarray with more than 1 element
     # place pivot element at the start
     swap(A, start, pivot_index)
     pivot = A[start]
@@ -123,21 +132,42 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
 class QuickSortTestCase(unittest.TestCase):
     """Tests for `quick_sort.py`"""
 
-    def test_switch(self):
+    def test_swap(self):
         A = [2, 3]
         swap(A, 0, 1)
         self.assertEqual(A, [3, 2])
 
     def test_partition(self):
         A = []
-        # TODO: make a test
+        pivot_index = partition(A, 0, 0, 0)
+        self.assertEqual(A, [])
+        self.assertEqual(pivot_index, 0)
+
+        B = [3, 5, 2, 1, 4]
+        pivot_index = partition(A, 0, 5, 2)
+
+        """
+        [3, 5, 2, 1, 4] - original input array
+        [2, 5, 3, 1, 4] - swap pivot with first
+        [2, 5, 3, 1, 4] - compare first with 5, and then with 3 (no change)
+        [2, 1, 3, 5, 4] - swap pos[1] with '1', advance index to 2
+        [2, 1, 3, 5, 4] - compare first with 4 (no change)
+        [1, 2, 3, 5, 4] - swap pos[0] with index-1, return index-1=1
+        """
+        self.assertEqual(B, [1, 2, 3, 5, 4])
+        self.assertEqual(pivot_index, 1)
+
+        # TODO: make more tests
 
     def test_quick_sort_with_basic_lists(self):
         """
         Are basic lists sorted correctly
         with output = # of comparisons?
         """
-
+        
+        # TODO: 
+        return
+        
         # TODO: fix basic test with proper assert values
         A = []
         comp0 = quick_sort(A, len(A))  # empty list input
