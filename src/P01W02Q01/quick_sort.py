@@ -53,12 +53,13 @@ import sys
 import unittest
 from copy import deepcopy
 
+
 class PivotMaker:
     pass
 
 
 class PivotFirstElement(PivotMaker):
-    """returns the first element as the pivot"""
+    """returns the first element index as the pivot"""
 
     def __init__(self, name="Question 1", pivoting_method="First Element"):
         self._name = name
@@ -70,14 +71,44 @@ class PivotFirstElement(PivotMaker):
 
 
 class PivotLastElement(PivotMaker):
-    """returns the first element as the pivot"""
+    """returns the last element index as the pivot"""
 
     def __init__(self, name="Question 2", pivoting_method="Last Element"):
         self._name = name
         self._pivoting_method = pivoting_method
 
     def get_pivot(self, A, start, end):
+        # TODO: get tge ubdex if the median and assign it to _pivot
         self._pivot = end-1
+        return self._pivot
+
+
+class PivotMedianElement(PivotMaker):
+    """
+    returns the median (from first, middle, last) element index as the pivot
+    """
+
+    def __init__(self, name="Question 3", pivoting_method="Median Element"):
+        self._name = name
+        self._pivoting_method = pivoting_method
+
+    def get_pivot(self, A, start, end):
+        n = end-start
+        # mid_index:
+        if n <= 2:
+            self._pivot = start
+            return self._pivot
+        # else: n > 1:
+        #     odd elements, e.g. 5 [0,1,2,3,4], mid_index=2 (n-1)/2
+        #     even elements, e.g.4 [0,1,2,3], mid_index=1 (n-1)/2
+        mid_index = start+(n-1)//2
+        p_elements = [A[start], A[mid_index], A[end-1]]
+        midean_value = sorted(p_elements)[1]
+
+        # pivot=median index
+        for i, p_element in enumerate(p_elements):
+            if midean_value == p_element:
+                self._pivot = [start, mid_index, end-1][i]
         return self._pivot
 
 
@@ -163,7 +194,17 @@ def quick_sort(A, start=0, end=None, pivot_director=None):
 
         # Partition A around pivot, fix comparison count
         comparisons = n-1
+#         # DEBUG
+#         print(A, "\tpre-partition")
+#         print("pivot: {}:'{}'".format(pivot_index,A[pivot_index]))
+#         # END DEBUG
+        
         pivot_index = partition(A, start, end, pivot_index)
+        
+#         # DEBUG
+#         print(A, "\tpost-partition")
+#         print("pivot: {}:'{}'\tcomp=\t{}".format(pivot_index,A[pivot_index],comparisons))
+#         # END DEBUG
 
         # Input: 1st and 2nd partitions of current sub-array
         x = quick_sort(A, start, pivot_index, pivot_director)
@@ -207,20 +248,23 @@ class QuickSortTestCase(unittest.TestCase):
         with output = # of comparisons?
         """
 
-        # TODO: fix basic test with proper assert values
+        # TODO: add assert tests for input types
+        pf = PivotFirstElement()
+        pd = PivotDirector(pf)
+
         A = []
-        comp0 = quick_sort(A)  # empty list input
+        comp0 = quick_sort(A, pivot_director=pd)  # empty list input
 
         self.assertEqual(A, [])
         self.assertEqual(comp0, 0)
 
         A = [1]
-        comp1 = quick_sort(A)  # single element
+        comp1 = quick_sort(A, pivot_director=pd)  # single element
         self.assertEqual(A, [1])
         self.assertEqual(comp1, 0)
 
         B = [1, 3, 5, 2, 4, 6]
-        comp2 = quick_sort(B)  # even length
+        comp2 = quick_sort(B, pivot_director=pd)  # even length
         """
     '1' [1, 3, 5, 2, 4, 6]  - 5 comparisons
     '3'    [3, 5, 2, 4, 6]  - 4 comparisons
@@ -237,7 +281,7 @@ class QuickSortTestCase(unittest.TestCase):
         self.assertEqual(comp2, 11)  # expected comparisons for pivot = 1st
 
         C = [1, 3, 5, 2, 4, 6, 3]
-        comp3 = quick_sort(C)  # odd length, duplicate value
+        comp3 = quick_sort(C, pivot_director=pd)  # odd length, duplicate value
         """
     '1' [1, 3, 5, 2, 4, 6, 3]  - 6 comparisons
     '3'    [3, 5, 2, 4, 6, 3]  - 5 comparisons
@@ -250,10 +294,38 @@ class QuickSortTestCase(unittest.TestCase):
         self.assertEqual(C, [1, 2, 3, 3, 4, 5, 6])
         self.assertEqual(comp3, 15)  # expected comparisons for pivot = 1st
 
-    def test_with_pivots(self):
         # TODO: implement testing for all pivot types.
         # TODO: add pivot factory to tests
-        pass
+
+    def test_pivot_median_element(self):
+        pf = PivotMedianElement()
+        pd = PivotDirector(pf)
+
+        A = []    # empty list input
+        comp0 = quick_sort(A, pivot_director=pd)
+
+        self.assertEqual(A, [])
+        self.assertEqual(comp0, 0)
+
+        A = [1]    # single element
+        comp1 = quick_sort(A, pivot_director=pd)
+        self.assertEqual(A, [1])
+        self.assertEqual(comp1, 0)
+
+        B = [1, 3, 5, 2, 4, 6]    # even length
+        comp2 = quick_sort(B, pivot_director=pd)
+        """
+        [1, 3, 5, 2, 4, 6]  - 1,5,6->'5'
+    '5' [5, 3, 1, 2, 4, 6]  - 5 comparisons
+        [4, 3, 1, 2, 5, 6]  - done
+        [4, 3, 1, 2]        - 4,3,2->'3'
+    '3' [3, 4, 1, 2]        - 3 comparisons
+    '3' [2, 1, 3, 4]        - done
+    '1' [2, 1]              - 1 comparison
+                            - Total = 5+3+1=9
+        """
+        self.assertEqual(B, [1, 2, 3, 4, 5, 6])
+        self.assertEqual(comp2, 9)  # expected comparisons for pivot = 1st
 
 
 def main(file_name):
@@ -274,9 +346,9 @@ def main(file_name):
 #                 pivot_factories[module_attribute.name] = module_attribute
 
         pivot_factories = dict(
-                          q1=PivotFirstElement(),
-                          q2=PivotLastElement()  # ,
-                          # q3=PivotMedianElement()
+                          # q1=PivotFirstElement(),
+                          # q2=PivotLastElement(),
+                          q3=PivotMedianElement()
                           )
 
         for _, pf in sorted(pivot_factories.items()):
