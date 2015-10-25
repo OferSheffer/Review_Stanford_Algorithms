@@ -50,12 +50,12 @@ Python TimeComplexity:
 '''
 
 import sys
-# TODO: if debug import unittest
+import unittest
 
 # TODO: create pivot_factory method
 
 def partition(A, l, r)
-# TODO
+    # TODO
     """
     Array A, l Left boundary, r Right boundary
     Input: A[l:r]
@@ -90,11 +90,48 @@ def quick_sort(A, length, pivot_factory=None):
     return x+y
 
 
+class QuickSortTestCase(unittest.TestCase):
+    """Tests for `quick_sort.py`"""
+
+    def test_quick_sort_with_basic_lists(self):
+        """
+        Are basic lists sorted correctly
+        with output = # of comparisons?
+        """
+
+        # TODO: fix basic test with proper assert values
+        A = []
+        res0 = quick_sort(A, len(A))  # empty list input
+
+        self.assertEqual(A, [])
+        self.assertEqual(res0, 0)
+
+        A = [1]
+        res1 = quick_sort(A, len(A))  # single element
+        self.assertEqual(A, [1])
+        self.assertEqual(res1, 0)
+
+        B = [1, 3, 5, 2, 4, 6]
+        res2 = quick_sort(B,  len(B))  # even length
+        self.assertEqual(B, [1, 2, 3, 4, 5, 6])
+        self.assertEqual(res2, 3)
+
+        C = [1, 3, 5, 2, 4, 6, 3]
+        res3 = quick_sort(C, len(C))  # odd length, duplicate value
+        self.assertEqual(C, [1, 2, 3, 3, 4, 5, 6])
+        self.assertEqual(res3, 6)
+
+    def test_with_pivots(self):
+        # TODO: implement testing for all pivot types.
+        # TODO: add pivot factory to tests
+        pass
+
+
 def main(file_name):
     # take values from file and run quick_sort
     with open(file_name) as fh:
         if file_name[:4] == 'test':
-            print(fh.readline())  # remove first answer line from debug file
+            print((fh.readline()).strip())  # remove+show answer from test file
         A = list(map(int, [line.strip() for line in fh]))
         print(quick_sort(A, len(A)))
 
@@ -105,7 +142,6 @@ if __name__ == '__main__':
         sys.exit("Usage: inv_count <file_name> (leave empty for testing)")
     if len(sys.argv) == 1:
         print("No filename input, testing...")
-        import test_quick_sort
         unittest.main()
     # else: argv == 2
     main(sys.argv[1])
