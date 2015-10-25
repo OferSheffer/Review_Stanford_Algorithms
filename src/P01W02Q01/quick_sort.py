@@ -78,7 +78,7 @@ class PivotLastElement(PivotMaker):
         self._pivoting_method = pivoting_method
 
     def get_pivot(self, A, start, end):
-        # TODO: get tge ubdex if the median and assign it to _pivot
+        # assign last element's index to _pivot
         self._pivot = end-1
         return self._pivot
 
@@ -194,17 +194,7 @@ def quick_sort(A, start=0, end=None, pivot_director=None):
 
         # Partition A around pivot, fix comparison count
         comparisons = n-1
-#         # DEBUG
-#         print(A, "\tpre-partition")
-#         print("pivot: {}:'{}'".format(pivot_index,A[pivot_index]))
-#         # END DEBUG
-        
         pivot_index = partition(A, start, end, pivot_index)
-        
-#         # DEBUG
-#         print(A, "\tpost-partition")
-#         print("pivot: {}:'{}'\tcomp=\t{}".format(pivot_index,A[pivot_index],comparisons))
-#         # END DEBUG
 
         # Input: 1st and 2nd partitions of current sub-array
         x = quick_sort(A, start, pivot_index, pivot_director)
@@ -295,7 +285,6 @@ class QuickSortTestCase(unittest.TestCase):
         self.assertEqual(comp3, 15)  # expected comparisons for pivot = 1st
 
         # TODO: implement testing for all pivot types.
-        # TODO: add pivot factory to tests
 
     def test_pivot_median_element(self):
         pf = PivotMedianElement()
@@ -346,8 +335,8 @@ def main(file_name):
 #                 pivot_factories[module_attribute.name] = module_attribute
 
         pivot_factories = dict(
-                          # q1=PivotFirstElement(),
-                          # q2=PivotLastElement(),
+                          q1=PivotFirstElement(),
+                          q2=PivotLastElement(),
                           q3=PivotMedianElement()
                           )
 
