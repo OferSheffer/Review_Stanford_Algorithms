@@ -90,7 +90,7 @@ def partition(A, start, end, pivot_index):
     # partition (iterate over j, bucket 'smaller'/'larger'-than-pivot values)
     i = start+1
     for j in range(start+1, end):
-        if A[j] < pivot:    # if A[j] > p, do nothing
+        if A[j] <= pivot:    # if A[j] > p, do nothing
             swap(A, j, i)
             i += 1
     swap(A, start, i-1)
@@ -117,7 +117,7 @@ def quick_sort(A, start=0, end=None, pivot_factory=None):
         # pivot_index = pivot_factory.get_pivot(A, start, end)
 
         # first question: always choose pivot = 0 [first element]
-        pivot_index = 0
+        pivot_index = start
 
         # Partition A around pivot, fix comparison count
         comparisons = n-1
@@ -179,16 +179,25 @@ class QuickSortTestCase(unittest.TestCase):
 
         B = [1, 3, 5, 2, 4, 6]
         comp2 = quick_sort(B)  # even length
+        """
+    '1' [1, 3, 5, 2, 4, 6]  - 5 comparisons
+    '3'    [3, 5, 2, 4, 6]  - 4 comparisons
+           [3, 2, 5, 4, 6]  - switch places
+           [2, 3, 5, 4, 6]  - place pivot
+    '2'    [2]              - 0 comparisons
+    '5'          [5, 4, 6]  - 2 comparisons
+                 [4, 5, 6]  - place pivot
+                 [4]        - 0 comparisons
+                       [6]  - 0 comparisons
+                            - Total = 5+4+2=11
+        """
         self.assertEqual(B, [1, 2, 3, 4, 5, 6])
-        self.assertEqual(comp2, 3)  # expected comparisons for pivot = 1st
-
-        # TODO: remove return
-        return
+        self.assertEqual(comp2, 11)  # expected comparisons for pivot = 1st
 
         C = [1, 3, 5, 2, 4, 6, 3]
         comp3 = quick_sort(C)  # odd length, duplicate value
         self.assertEqual(C, [1, 2, 3, 3, 4, 5, 6])
-        self.assertEqual(comp3, 6)
+        self.assertEqual(comp3, 6)  # expected comparisons for pivot = 1st
 
     def test_with_pivots(self):
         # TODO: implement testing for all pivot types.
