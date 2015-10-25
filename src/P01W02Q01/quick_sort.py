@@ -144,7 +144,7 @@ class QuickSortTestCase(unittest.TestCase):
         self.assertEqual(pivot_index, 0)
 
         B = [3, 5, 2, 1, 4]
-        pivot_index = partition(A, 0, 5, 2)
+        pivot_index = partition(B, 0, 5, 2)
 
         """
         [3, 5, 2, 1, 4] - original input array
@@ -164,10 +164,10 @@ class QuickSortTestCase(unittest.TestCase):
         Are basic lists sorted correctly
         with output = # of comparisons?
         """
-        
-        # TODO: 
+
+        # TODO:
         return
-        
+
         # TODO: fix basic test with proper assert values
         A = []
         comp0 = quick_sort(A, len(A))  # empty list input
