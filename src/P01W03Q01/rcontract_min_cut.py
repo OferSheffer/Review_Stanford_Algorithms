@@ -66,16 +66,18 @@ class QuickSortTestCase(unittest.TestCase):
 
     def test_get_graph_data(self):
         adjacency_data = [
-                          "",
-                          "",
-                          "",
+                          "1    4    3",
+                          "2    3",
+                          "3    1,    2",
+                          "4    1"
                           ]
         v_data, e_data = get_graph_data(adjacency_data)
 
-        self.assertTrue(v_data="", "Not yet implemented.")
-        self.assertTrue(e_data="", "Not yet implemented.")
+        self.assertTrue(v_data.keys().sorted() == [1, 2, 3, 4],
+                        "Not yet implemented.")
+        self.assertTrue(e_data.values().sorted() == [(1, 3), (1, 4), (2, 3)],
+                        "Not yet implemented.")
         self.assertTrue(None, "Not yet implemented.")
-        pass
 
     def test_somthing(self):
         # TODO: implement some tests
