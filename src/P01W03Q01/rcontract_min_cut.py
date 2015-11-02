@@ -32,13 +32,9 @@ Educational notes:
  http://www.python-course.eu/graphs_python.php
  http://shahriar.svbtle.com/underscores-in-python
  http://omar.toomuchcookies.net/node/2012/08/double-underscore-in-python-inheritance/
+ https://wiki.python.org/moin/PythonDecoratorLibrary
+ http://pythoncentral.io/validate-python-function-parameters-and-return-types-with-decorators/
 
-Thoughts:
- 1. Considering row 8 has vertex no. 8, is it necessary to make a data
-    structure for the vertices?
-    - keeping vertices as a list, deletion is 'different'.
- 2. is there an existing Graph class that I can use and just add to the
-    exiting API?
 '''
 
 from random import randrange
@@ -54,7 +50,7 @@ REPETITION = 200  # n^n*ln(n)
 irand = randrange(0, 10)
 
 
-class Extended_Graph(nx.Graph):
+class ExtendedGraph(nx.Graph):
     """
     Using netwrokx module:
     -----
@@ -90,44 +86,53 @@ class Extended_Graph(nx.Graph):
                 min_cut = temp_min_cut
         return min_cut
 
-    @property
-    def set_graph_data(adjacency_data):
-        # TODO: implement
-        for line in adjacency_data:
-            items = [map(int, line.split())]
-
-            # if set (items[0],item_i).sorted() not in edge_set
-            # add this edge to the edge_set
-
-        return "", ""
+    @staticmethod
+    def init_graph_wstrings(node_data_strings):
+        """
+        Initialize a new ExtendedGraph:
+        Accepts a list of strings, each holding information regarding
+        a single node (first element) and its connections (separated by spaces)
+        Returns a graph_object of type ExtendedGraph(nx.Graph)
+        Holding node and edge information of the input data.
+        """
+        graph_object = ExtendedGraph()
+        for line in node_data_strings:
+            line_elements = list(map(int, line.split()))
+            graph_object.add_node(line_elements[0])
+            for element_index in range(1, len(line_elements)):
+                (graph_object
+                 .add_edge(line_elements[0], line_elements[element_index]))
+        return graph_object
 
 
 class ExtendedGraphTestCase(unittest.TestCase):
     """Tests for `rcontract_min_cut.py`"""
 
     def test_networkx_module(self):
-        my_graph = Extended_Graph()
+        my_graph = ExtendedGraph()
         my_graph.add_edge(1, 2)
         my_graph.add_node(42)
         self.assertEqual(sorted(my_graph.nodes()), [1, 2, 42])
         self.assertEqual(sorted(my_graph.edges()), [(1, 2)])
 
-    def test_initialize_graph_data(self):
+    def test_init_graph_wstrings(self):
         adjacency_data = [
                           "1    4    3",
                           "2    3",
-                          "3    1,    2",
+                          "3    1    2",
                           "4    1"
                           ]
 
-        self.assertTrue(graph.keys().sorted() == [1, 2, 3, 4],
-                        "Not yet implemented.")
-        self.assertTrue(graph.get_edges().sorted() == [(1, 3), (1, 4), (2, 3)],
-                        "Not yet implemented.")
+        my_graph = ExtendedGraph.init_graph_wstrings(adjacency_data)
+
+        self.assertEqual(sorted(my_graph.nodes()), [1, 2, 3, 4])
+        self.assertEqual(sorted(my_graph.edges()), [(1, 3), (1, 4), (2, 3)])
 
     def test_somthing(self):
         # TODO: implement some tests
         pass
+
+
 
 
 def main(file_name):
@@ -137,12 +142,10 @@ def main(file_name):
             print((fh.readline()).strip())  # remove+show answer from test file
 
         # populate graph
-        my_graph = Extended_Graph()
         node_data_strings = [line.strip() for line in fh]
-        for node_string in node_data_strings:
-            get_graph_data(adjacency_data)
- 
-        min_cut = get_min_cut(v_data, e_data)
+        my_graph = ExtendedGraph.init_graph_wstrings(node_data_strings)
+
+        min_cut = get_min_cut(my_graph)
 
         print(min_cut)
 
