@@ -42,58 +42,75 @@ Thoughts:
 '''
 
 from random import randrange
-import copy
+import networkx as nx
 import sys
 import unittest
 
-from graph import Graph
+# from graph import Graph
+
 
 REPETITION = 200  # n^n*ln(n)
 
 irand = randrange(0, 10)
 
 
-
-
-
-def rcontract_min_cut(graph):
+class Extended_Graph(nx.Graph):
     """
-    David Karger's Random Contraction Algorithm
-
-    -    While there are more than 2 vertices:
-    i.    Pick a remaining edge (u,v) uniformly at random.
-    ii.    Merge (or “contract”) u and v into a single vertex.
-    iii.    Remove self-loops
-    iv.    Return cut represented by final 2 vertices.
+    Using netwrokx module:
+    -----
+    >>> import networkx as nx
+    >>> G=nx.Graph()
+    >>> G.add_edge(1,2)
+    >>> G.add_node(42)
+    >>> print(sorted(G.nodes()))
+    [1, 2, 42]
+    >>> print(sorted(G.edges()))
+    [(1, 2)]
     """
+    def rcontract_min_cut(self):
+        """
+        David Karger's Random Contraction Algorithm
 
-    # TODO: create this algorithm
-    return 0
-    pass
+        -    While there are more than 2 vertices:
+        i.    Pick a remaining edge (u,v) uniformly at random.
+        ii.    Merge (or “contract”) u and v into a single vertex.
+        iii.    Remove self-loops
+        iv.    Return cut represented by final 2 vertices.
+        """
+
+        # TODO: create this algorithm
+        return 0
+        pass
+
+    def get_min_cut(self):
+        min_cut = None
+        for _ in range(REPETITION):
+            temp_min_cut = rcontract_min_cut(graph)
+            if temp_min_cut < min_cut:
+                min_cut = temp_min_cut
+        return min_cut
+
+    @property
+    def set_graph_data(adjacency_data):
+        # TODO: implement
+        for line in adjacency_data:
+            items = [map(int, line.split())]
+
+            # if set (items[0],item_i).sorted() not in edge_set
+            # add this edge to the edge_set
+
+        return "", ""
 
 
-def get_min_cut(graph):
-    min_cut = None
-    for _ in range(REPETITION):
-        temp_min_cut = rcontract_min_cut(graph)
-        if temp_min_cut < min_cut:
-            min_cut = temp_min_cut
-    return min_cut
-
-
-def get_graph_data(adjacency_data):
-    # TODO: implement
-    for line in adjacency_data:
-        items = [map(int, line.split())]
-
-        # if set (items[0],item_i).sorted() not in edge_set
-        # add this edge to the edge_set
-
-    return "", ""
-
-
-class QuickSortTestCase(unittest.TestCase):
+class ExtendedGraphTestCase(unittest.TestCase):
     """Tests for `rcontract_min_cut.py`"""
+
+    def test_networkx_module(self):
+        my_graph = Extended_Graph()
+        my_graph.add_edge(1, 2)
+        my_graph.add_node(42)
+        self.assertEqual(sorted(my_graph.nodes()), [1, 2, 42])
+        self.assertEqual(sorted(my_graph.edges()), [(1, 2)])
 
     def test_initialize_graph_data(self):
         adjacency_data = [
@@ -102,17 +119,11 @@ class QuickSortTestCase(unittest.TestCase):
                           "3    1,    2",
                           "4    1"
                           ]
-        graph = get_graph_data(adjacency_data)
 
         self.assertTrue(graph.keys().sorted() == [1, 2, 3, 4],
                         "Not yet implemented.")
         self.assertTrue(graph.get_edges().sorted() == [(1, 3), (1, 4), (2, 3)],
                         "Not yet implemented.")
-
-    def test_somthing(self):
-        self.assertTrue(None, "Not yet implemented.")
-        # TODO: implement some tests
-        pass
 
     def test_somthing(self):
         # TODO: implement some tests
@@ -124,10 +135,13 @@ def main(file_name):
     with open(file_name) as fh:
         if file_name[:4] == 'test':
             print((fh.readline()).strip())  # remove+show answer from test file
-        adjacency_data = [line.strip() for line in fh]
-        for line in adjacency_data:
-            v_data, e_data = get_graph_data(adjacency_data)
 
+        # populate graph
+        my_graph = Extended_Graph()
+        node_data_strings = [line.strip() for line in fh]
+        for node_string in node_data_strings:
+            get_graph_data(adjacency_data)
+ 
         min_cut = get_min_cut(v_data, e_data)
 
         print(min_cut)
