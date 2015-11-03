@@ -61,6 +61,19 @@ class ExtendedMultiGraph(nx.MultiGraph):
     >>> print(sorted(G.edges()))
     [(1, 2)]
     """
+
+    def merge_nodes(self, v, u):
+        # TODO: test this algorithm
+        for node in self[u]:
+            self.add_edge(v, node)
+        self.remove_node(u)
+        self_loops = True
+        while self_loops is True:
+            try:
+                self.remove_edge(v, v)
+            except nx.NetworkXError:
+                self_loops = False
+
     def rcontract_min_cut(self):
         # TODO: test this
         """
@@ -82,27 +95,24 @@ class ExtendedMultiGraph(nx.MultiGraph):
             return min_cut
 
         # contraction loop (need to contract len-2 times to reach 2 nodes)
-        for nodes_count in reversed(range(3, len(tmp_graph.nodes()+1))):
+        for nodes_count in reversed(range(3, total_of_nodes+1)):
             # i. Pick a remaining edge (u,v) uniformly at random.
             v, u = rchoice(tmp_graph.edges())
             # ii. Merge (or “contract”) u and v into a single vertex.
-            
-            
-            
-            # TODO: create this algorithm
-            pass
+            tmp_graph.merge_nodes(v, u)
 
         # result passing
+        total_of_nodes = len(tmp_graph.nodes())
         if total_of_nodes is 2:
             return len(tmp_graph.edges())
         else:
             print("Error in rcontract_min_cut")
-            return None
+            return min_cut
         return min_cut
 
     def get_min_cut(self):
         # TODO: test this
-        min_cut = None
+        min_cut = float('inf')
         len_nodes = len(self.nodes())
 
         # TODO: test repetition value + efficacy
@@ -180,7 +190,7 @@ class ExtendedMultiGraphTestCase(unittest.TestCase):
         my_graph2.add_edge(1, 1)
         self.assertEqual(sorted(my_graph2.nodes()), [1])
         self.assertEqual(sorted(my_graph2.edges()), [(1, 1)])
-        min_cut2 = my_graph1.get_min_cut()
+        min_cut2 = my_graph2.get_min_cut()
         self.assertEqual(min_cut2, 0)
 
         my_graph3 = ExtendedMultiGraph()  # isolated node
@@ -189,11 +199,11 @@ class ExtendedMultiGraphTestCase(unittest.TestCase):
         my_graph3.add_node(42)
         self.assertEqual(sorted(my_graph3.nodes()), [1, 2, 42])
         self.assertEqual(sorted(my_graph3.edges()), [(1, 2), (1, 2)])
-        min_cut3 = my_graph1.get_min_cut()
+        min_cut3 = my_graph3.get_min_cut()
         self.assertEqual(min_cut3, 0)
 
         my_graph3.remove_node(42)
-        min_cut4 = my_graph1.get_min_cut()
+        min_cut4 = my_graph3.get_min_cut()
         self.assertEqual(min_cut4, 2)
 
     def test_somthing(self):
