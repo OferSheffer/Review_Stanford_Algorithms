@@ -65,14 +65,17 @@ class ExtendedMultiGraph(nx.MultiGraph):
 
     def merge_nodes(self, v, u):
         for node in self[u]:
-            self.add_edge(v, node)
+            for parallel_index in range(len(self[u][node])):  # @UnusedVariable
+                self.add_edge(v, node)
         self.remove_node(u)
+
         self_loops = True
         while self_loops is True:
             try:
                 self.remove_edge(v, v)
             except nx.NetworkXError:
                 self_loops = False
+
 
     def rcontract_min_cut(self):
         """
@@ -84,7 +87,6 @@ class ExtendedMultiGraph(nx.MultiGraph):
             iii.   Remove self-loops
         -    Return cut represented by final 2 vertices.
         """
-
         min_cut = 0
         tmp_graph = deepcopy(self)
         total_of_nodes = len(tmp_graph.nodes())
@@ -98,12 +100,14 @@ class ExtendedMultiGraph(nx.MultiGraph):
             # i. Pick a remaining edge (u,v) uniformly at random.
             v, u = rchoice(tmp_graph.edges())
             # ii. Merge (or “contract”) u and v into a single vertex.
+            # iii.   Remove self-loops
             tmp_graph.merge_nodes(v, u)
 
         # result passing
         total_of_nodes = len(tmp_graph.nodes())
         if total_of_nodes is 2:
-            return len(tmp_graph.edges())
+            min_cut = len(tmp_graph.edges())
+            return min_cut
         else:
             print("Error in rcontract_min_cut")
             return min_cut
@@ -142,16 +146,21 @@ class ExtendedMultiGraph(nx.MultiGraph):
             line_elements = list(map(int, line.split()))
             if line_elements[0] in graph_object.nodes():
                 assigned_node = True
-            else:
-                graph_object.add_node(line_elements[0])
+            # TODO: test without initial node assignment
+            # else:
+            #     graph_object.add_node(line_elements[0])
             for element_index in range(1, len(line_elements)):
                 # if edge already listed, skip
                 if (
                     # edge has been assigned by another
                     assigned_node and
-                    # edge exists already
-                    sorted((line_elements[0], line_elements[element_index])) in
-                        sorted(graph_object.edges())):
+                    # edge entered already into graph
+                    tuple(
+                          sorted(
+                                 (line_elements[0],
+                                  line_elements[element_index])
+                                )
+                         ) in sorted(graph_object.edges())):
                     continue
                 # else add new edge
                 (graph_object
@@ -223,11 +232,6 @@ def main(file_name):
         # populate graph
         node_data_strings = [line.strip() for line in fh]
         my_graph = ExtendedMultiGraph.init_graph_wstrings(node_data_strings)
-
-        if file_name[:4] == 'test':
-            nx.draw_networkx(my_graph)
-            plt.draw()
-            plt.show()
 
         min_cut = my_graph.get_min_cut()
 
