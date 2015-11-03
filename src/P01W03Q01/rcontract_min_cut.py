@@ -152,26 +152,31 @@ class ExtendedMultiGraphTestCase(unittest.TestCase):
         self.assertEqual(sorted(my_graph.nodes()), [1, 2, 3, 4])
         self.assertEqual(sorted(my_graph.edges()), [(1, 3), (1, 4), (2, 3)])
 
-#     def test_get_min_cut(self):
-# 
-#         my_graph1 = ExtendedMultiGraph()  # empty graph
-#         min_cut1 = my_graph1.get_min_cut()
-#         self.assertEqual(min_cut1, 0)
-# 
-#         my_graph2 = ExtendedMultiGraph()  # single node graph
-#         my_graph2.add_edge(1, 1)
-#         self.assertEqual(sorted(my_graph2.nodes()), [1])
-#         self.assertEqual(sorted(my_graph2.edges()), [(1, 1)])
-#         min_cut2 = my_graph1.get_min_cut()
-#         self.assertEqual(min_cut2, 0)
-# 
-#         my_graph3 = ExtendedMultiGraph()  # isolated node
-#         my_graph3.add_edge(1, 2)
-#         my_graph3.add_node(42)
-#         self.assertEqual(sorted(my_graph3.nodes()), [1, 2, 42])
-#         self.assertEqual(sorted(my_graph3.edges()), [(1, 2)])
-#         min_cut3 = my_graph1.get_min_cut()
-#         self.assertEqual(min_cut3, 0)
+    def test_get_min_cut(self):
+
+        my_graph1 = ExtendedMultiGraph()  # empty graph
+        min_cut1 = my_graph1.get_min_cut()
+        self.assertEqual(min_cut1, 0)
+
+        my_graph2 = ExtendedMultiGraph()  # single node graph
+        my_graph2.add_edge(1, 1)
+        self.assertEqual(sorted(my_graph2.nodes()), [1])
+        self.assertEqual(sorted(my_graph2.edges()), [(1, 1)])
+        min_cut2 = my_graph1.get_min_cut()
+        self.assertEqual(min_cut2, 0)
+
+        my_graph3 = ExtendedMultiGraph()  # isolated node
+        my_graph3.add_edge(1, 2)
+        my_graph3.add_edge(1, 2)
+        my_graph3.add_node(42)
+        self.assertEqual(sorted(my_graph3.nodes()), [1, 2, 42])
+        self.assertEqual(sorted(my_graph3.edges()), [(1, 2), (1, 2)])
+        min_cut3 = my_graph1.get_min_cut()
+        self.assertEqual(min_cut3, 0)
+
+        my_graph3.remove_node(42)
+        min_cut4 = my_graph1.get_min_cut()
+        self.assertEqual(min_cut4, 2)
 
     def test_somthing(self):
         # TODO: implement some tests
