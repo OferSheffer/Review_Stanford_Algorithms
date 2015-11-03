@@ -40,6 +40,7 @@ Educational notes:
 from copy import deepcopy
 from random import choice as rchoice
 from math import ceil, log
+import matplotlib.pyplot as plt
 import networkx as nx
 import sys
 import unittest
@@ -63,7 +64,6 @@ class ExtendedMultiGraph(nx.MultiGraph):
     """
 
     def merge_nodes(self, v, u):
-        # TODO: test this algorithm
         for node in self[u]:
             self.add_edge(v, node)
         self.remove_node(u)
@@ -75,7 +75,6 @@ class ExtendedMultiGraph(nx.MultiGraph):
                 self_loops = False
 
     def rcontract_min_cut(self):
-        # TODO: test this
         """
         David Karger's '90s Random Contraction Algorithm
 
@@ -111,14 +110,13 @@ class ExtendedMultiGraph(nx.MultiGraph):
         return min_cut
 
     def get_min_cut(self):
-        # TODO: test this
         min_cut = float('inf')
         len_nodes = len(self.nodes())
 
         # TODO: test repetition value + efficacy
         # Repetition = n^2*ln(n) -> p[fail]=1/n
         if len_nodes <= 10:
-            REPETITION = 1000
+            REPETITION = 1000  # reduce chances of failure further than 1/n
         else:
             REPETITION = ceil((pow(len_nodes, 2)*log(len_nodes)))
 
@@ -148,8 +146,12 @@ class ExtendedMultiGraph(nx.MultiGraph):
                 graph_object.add_node(line_elements[0])
             for element_index in range(1, len(line_elements)):
                 # if edge already listed, skip
-                if (assigned_node and line_elements[element_index]
-                        in graph_object.nodes()):
+                if (
+                    # edge has been assigned by another
+                    assigned_node and
+                    # edge exists already
+                    sorted((line_elements[0], line_elements[element_index])) in
+                        sorted(graph_object.edges())):
                     continue
                 # else add new edge
                 (graph_object
@@ -221,6 +223,11 @@ def main(file_name):
         # populate graph
         node_data_strings = [line.strip() for line in fh]
         my_graph = ExtendedMultiGraph.init_graph_wstrings(node_data_strings)
+
+        if file_name[:4] == 'test':
+            nx.draw_networkx(my_graph)
+            plt.draw()
+            plt.show()
 
         min_cut = my_graph.get_min_cut()
 
