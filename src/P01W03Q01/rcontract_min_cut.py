@@ -37,6 +37,7 @@ Educational notes:
 
 '''
 
+from copy import deepcopy
 from random import choice as rchoice
 from math import ceil, log
 import networkx as nx
@@ -72,15 +73,31 @@ class ExtendedMultiGraph(nx.MultiGraph):
         -    Return cut represented by final 2 vertices.
         """
 
-        min_cut = float('inf')
-        temp_nodes = self.nodes()
-        temp_edges = self.edges()
-        while temp_edges > 2:
-            rchoice(temp_edges)
+        min_cut = 0
+        tmp_graph = deepcopy(self)
+        total_of_nodes = len(tmp_graph.nodes())
+
+        # edge cases:
+        if total_of_nodes in (0, 1):
+            return min_cut
+
+        # contraction loop (need to contract len-2 times to reach 2 nodes)
+        for nodes_count in reversed(range(3, len(tmp_graph.nodes()+1))):
+            # i. Pick a remaining edge (u,v) uniformly at random.
+            v, u = rchoice(tmp_graph.edges())
+            # ii. Merge (or “contract”) u and v into a single vertex.
+            
+            
+            
             # TODO: create this algorithm
             pass
 
-        min_cut = len(temp_edges)
+        # result passing
+        if total_of_nodes is 2:
+            return len(tmp_graph.edges())
+        else:
+            print("Error in rcontract_min_cut")
+            return None
         return min_cut
 
     def get_min_cut(self):
@@ -88,6 +105,7 @@ class ExtendedMultiGraph(nx.MultiGraph):
         min_cut = None
         len_nodes = len(self.nodes())
 
+        # TODO: test repetition value + efficacy
         # Repetition = n^2*ln(n) -> p[fail]=1/n
         if len_nodes <= 10:
             REPETITION = 1000
