@@ -37,9 +37,24 @@ Educational notes:
 
 '''
 
+# TODO: profiling and performance (300 REPETITION on large file)
+#    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+# 121342596   76.635    0.000   82.183    0.000 multigraph.py:567(edges_iter)
+#     64603   13.865    0.000   96.048    0.001 multigraph.py:516(edges)
+#  86584047    5.925    0.000    5.925    0.000 {method 'items' of 'dict' objects}
+# 4774200/300    5.877    0.000   13.566    0.045 copy.py:137(deepcopy)
+#   3163334    5.340    0.000    6.234    0.000 multigraph.py:175(add_edge)
+#     59400    4.099    0.000   12.907    0.000 rcontract_min_cut.py:67(merge_nodes)
+# 1631400/300    4.054    0.000   13.545    0.045 copy.py:242(_deepcopy_dict)
+#      9814    3.964    0.000    3.964    0.000 {built-in method sorted}
+#       300    3.540    0.012  115.882    0.386 rcontract_min_cut.py:81(rcontract_min_cut)
+#  11406601    1.516    0.000    1.516    0.000 {method 'get' of 'dict' objects}
+
+
 from copy import deepcopy
 from random import choice as rchoice
 from math import ceil, log
+import logging
 import matplotlib.pyplot as plt
 import networkx as nx
 import sys
@@ -118,14 +133,22 @@ class ExtendedMultiGraph(nx.MultiGraph):
         len_nodes = len(self.nodes())
 
         # TODO: test repetition value + efficacy
-        # Repetition = n^2*ln(n) -> p[fail]=1/n
+        # Repetition = n**2 -> p[fail]=1/e
+        # Repetition = n**2*ln(n) -> p[fail]=1/n
+        # We'd be happy enough with 95% chance of success:
+        # Repetition = n**2*3 -> (1/e)**-3 < 5 %
         if len_nodes <= 10:
             REPETITION = 1000  # reduce chances of failure further than 1/n
         else:
-            REPETITION = ceil((pow(len_nodes, 2)*log(len_nodes)))
+            REPETITION = ceil(pow(len_nodes, 2)*3)
+            print("Reps:", REPETITION)
 
         # run randomized contraction + save best min_cut result
-        for _ in range(REPETITION):
+        for rep in range(REPETITION):
+            if rep % 100 is 0:
+                print(rep, "complete, min_cut=", min_cut)
+                if rep % 300 is 0 and rep is not 0:
+                    sys.exit()
             temp_min_cut = self.rcontract_min_cut()
             if temp_min_cut < min_cut:
                 min_cut = temp_min_cut
@@ -222,7 +245,6 @@ class ExtendedMultiGraphTestCase(unittest.TestCase):
         pass
 
 
-
 def main(file_name):
     # take values from file and run quick_sort
     with open(file_name) as fh:
@@ -247,3 +269,4 @@ if __name__ == '__main__':
         unittest.main()
     # else: argv == 2
     main(sys.argv[1])
+
