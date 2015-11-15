@@ -54,7 +54,6 @@ Educational notes:
 from copy import deepcopy
 from random import choice as rchoice
 from math import ceil, log
-import logging
 import matplotlib.pyplot as plt
 import networkx as nx
 import sys
