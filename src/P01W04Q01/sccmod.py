@@ -66,7 +66,35 @@ class SccMod(mgm.MyDiGraph):
         Constructor
         '''
 
+    @staticmethod
+    def init_graph_warcstrings(node_arcs_strings):
+        """
+        Initialize a new SccMod:
+        Accepts a list of strings, each holding information regarding
+        a single arc (two nodes separated by spaces)
+        Returns a graph_object of type SccMod(mgm.MyDiGraph)
+        Holding adjacency representation of the graph.
+        """
+        graph_object = SccMod()
+        for line in node_arcs_strings:
+            arc_elements = list(map(int, line.split()))
+            graph_object.add_edge(arc_elements)
+        return graph_object
 
+
+class SccModTestCase(unittest.TestCase):
+    """Tests for `sccmod.py`"""
+    def test_init_graph_wstrings(self):
+        node_arcs_strings = [
+                             "1 4",
+                             "1 3",
+                             "2 3"
+                             ]
+
+        my_graph = SccMod.init_graph_warcstrings(node_arcs_strings)
+
+        self.assertEqual(sorted(my_graph.nodes()), [1, 2, 3, 4])
+        self.assertEqual(sorted(my_graph.edges()), [(1, 3), (1, 4), (2, 3)])
 
 
 def main(file_name):
@@ -76,10 +104,10 @@ def main(file_name):
             print((fh.readline()).strip())  # remove+show answer from test file
 
         # populate graph
-        node_data_strings = [line.strip() for line in fh]
+        node_arcs_strings = [line.strip() for line in fh]
         # TODO: init_graph_wstrings() method for SccMod
         # my_graph = ExtendedMultiGraph.init_graph_wstrings(node_data_strings)
-        my_graph = SccMod.init_graph_wstrings(node_data_strings)
+        my_graph = SccMod.init_graph_warcstrings(node_arcs_strings)
 
         topfive = my_graph.topfive_scc_sizes()
 
