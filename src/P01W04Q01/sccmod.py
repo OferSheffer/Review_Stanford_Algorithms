@@ -97,7 +97,8 @@ class SccModTestCase(unittest.TestCase):
         my_graph = SccMod.init_graph_warcstrings(node_arcs_strings)
 
         self.assertEqual(sorted(list(my_graph.nodes)), [1, 2, 3, 4])
-        self.assertEqual(sorted(list(my_graph.arcs)), [(1, 3), (1, 4), (2, 3)])
+        self.assertEqual(sorted(list(my_graph.arcs)),
+                         ['(1, 3)', '(1, 4)', '(2, 3)'])
 
 
 def main(file_name):

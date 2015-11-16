@@ -10,6 +10,10 @@ class Node(object):
         # TODO: node methods and attributes
         self._id = node_id
         self._parent = parent_graph
+        self._narcs = set()  # set of arc.id values for arcs outgoing from self
+
+    def addarc(self, arc):
+        self._narcs.add(arc.id)
 
     @property
     def id(self):
@@ -43,10 +47,11 @@ class Arc(object):
             raise TypeError
 
         # else: both nodes are of the Node class
-        # TODO: is it possible to use a mutable inside a tuple?
-        self._s = node_s
-        self._t = node_t
         self._arc = tuple([node_s, node_t])
+
+    @property
+    def id(self):
+        return "({}, {})".format(self.s.id, self.t.id)
 
     @property
     def s(self):
@@ -55,8 +60,6 @@ class Arc(object):
     @property
     def t(self):
         return self._arc[1]
-
-
 
 
 class MyDiGraph(object):
@@ -73,7 +76,7 @@ class MyDiGraph(object):
 
     def __init__(self):
         self._nodes = {}
-        self._arcs = set()
+        self._arcs = {}
 
     def add_arc(self, arc):
         # TODO: reorganize data-structure
@@ -84,14 +87,15 @@ class MyDiGraph(object):
             raise TypeError
 
         # else: input is a two node arc
-        if arc not in self._arcs:
-            self._arcs.add(arc)
-            # TODO: dict/set input check-ups
+        if arc.id not in self._arcs:
+            self._arcs[arc.id] = arc
+            # TODO: valid input check-ups
             for node in (arc.s, arc.t):
-                if node not in self._nodes:
-                    self._nodes[node] = set()
+                if node.id not in self._nodes:
+                    self._nodes[node.id] = node
+                    node.parent = self  # TODO: is this going to work?
 
-            self._nodes[arc.s].add(arc)
+            arc.s.addarc(arc)  # figure this one out
 
     def add_node(self, node):
         # TODO: add_node()
