@@ -3,29 +3,50 @@ Created on Nov 15, 2015
 
 @author: Ofer
 '''
-from _pytest.python import isclass
 
 
 class Node(object):
-    def __init__(self, parent_graph):
+    def __init__(self, node_id=None, parent_graph=None):
         # TODO: node methods and attributes
-        pass
+        self._id = node_id
+        self._parent = parent_graph
+
+    @property
+    def id(self):
+        return self._id
+
+    def getid(self):
+        return self._id
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @parent.setter
+    def parent(self, parent_graph):
+        self._parent = parent_graph
+
+    @staticmethod
+    def strint_to_node(str_input):
+        int_input = int(str_input)
+        node_object = Node(node_id=int_input)
+        return node_object
 
 
 class Arc(object):
     # TODO: not sure how to implement this one yet.
+    """ accepts two nodes and creates an Arc instance """
 
     def __init__(self, node_s, node_t):
-        if (not isclass(node_s, Node) or
-                not isclass(node_t, Node)):
-            raise ValueError
+        if (not isinstance(node_s, Node) or
+                not isinstance(node_t, Node)):
+            raise TypeError
 
         # else: both nodes are of the Node class
         # TODO: is it possible to use a mutable inside a tuple?
         self._s = node_s
         self._t = node_t
-        self._arc = tuple(node_s, node_t)
-
+        self._arc = tuple([node_s, node_t])
 
     @property
     def s(self):
@@ -34,6 +55,8 @@ class Arc(object):
     @property
     def t(self):
         return self._arc[1]
+
+
 
 
 class MyDiGraph(object):
@@ -53,10 +76,12 @@ class MyDiGraph(object):
         self._arcs = set()
 
     def add_arc(self, arc):
-        # TODO: hopefully, sets here don't take up too much memory
-        """nodes[arc.s]: set(arc(1,2), more arcs)"""
-        if not isclass(arc, Arc):
-            raise ValueError
+        # TODO: reorganize data-structure
+        """
+        nodes[arc.s]: set(arc(1,2), more arcs)
+        """
+        if not isinstance(arc, Arc):
+            raise TypeError
 
         # else: input is a two node arc
         if arc not in self._arcs:
@@ -66,8 +91,16 @@ class MyDiGraph(object):
                 if node not in self._nodes:
                     self._nodes[node] = set()
 
-            self._nodes[arc.s].append(self._arcs[arc])
+            self._nodes[arc.s].add(arc)
 
     def add_node(self, node):
         # TODO: add_node()
-        raise NotImplementedError
+        raise NotImplementedError("add_node")
+
+    @property
+    def nodes(self):
+        return self._nodes.keys()
+
+    @property
+    def arcs(self):
+        return self._arcs

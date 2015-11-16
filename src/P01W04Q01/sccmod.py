@@ -38,6 +38,7 @@ Educational notes:
  karger's min cut algorithm (Week 03) and being low on time, I'll implement
  my own class and look for fast-working graph modules at a later date.
 
+ Don't use non-hashable types as keys. Silly.
 '''
 
 
@@ -53,18 +54,16 @@ class SccMod(mgm.MyDiGraph):
     extended with an SCC related algorithm
 
     >>> G=mgm.Graph()
-    >>> G.add_edge(1,2)
+    >>> G.add_arc(1,2)
     >>> G.add_node(42)
     >>> print(sorted(G.nodes()))
     [1, 2, 42]
-    >>> print(sorted(G.edges()))
+    >>> print(sorted(G.arcsedges()))
     [(1, 2)]
     '''
 
-    def __init__(self, params):
-        '''
-        Constructor
-        '''
+    def __init__(self):
+        super().__init__()
 
     @staticmethod
     def init_graph_warcstrings(node_arcs_strings):
@@ -77,8 +76,12 @@ class SccMod(mgm.MyDiGraph):
         """
         graph_object = SccMod()
         for line in node_arcs_strings:
-            arc_elements = list(map(int, line.split()))
-            graph_object.add_edge(arc_elements)
+            arc_elements = mgm.Arc(*list(map(
+                                             mgm.Node.strint_to_node,
+                                             line.split()
+                                             )
+                                         ))
+            graph_object.add_arc(arc_elements)
         return graph_object
 
 
@@ -93,8 +96,8 @@ class SccModTestCase(unittest.TestCase):
 
         my_graph = SccMod.init_graph_warcstrings(node_arcs_strings)
 
-        self.assertEqual(sorted(my_graph.nodes()), [1, 2, 3, 4])
-        self.assertEqual(sorted(my_graph.edges()), [(1, 3), (1, 4), (2, 3)])
+        self.assertEqual(sorted(list(my_graph.nodes)), [1, 2, 3, 4])
+        self.assertEqual(sorted(list(my_graph.arcs)), [(1, 3), (1, 4), (2, 3)])
 
 
 def main(file_name):
