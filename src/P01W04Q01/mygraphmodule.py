@@ -78,6 +78,31 @@ class MyDiGraph(object):
         self._nodes = {}
         self._arcs = {}
 
+    def dfs_loop(self):
+        """DFS for SCC"""
+        
+        t = 0  # 1st pass finishing times / # of nodes processed so far
+        s = None  # leaders in 2nd pass / current source vertex
+        
+        for i, node in enumerate(self.nodes.keys()): 
+            # i = n down to 1:
+            if not node.explored:
+                s = len(self.nodes.keys())-i
+                DFS(self, i)
+                
+DFS(graph G, node i):
+    mark i as explored   // for rest of calling DFS-Loop function
+    set leader(i) = node s
+    for every arc (i, j) in G:
+        if j not yet explored:
+            DFS(G, j)
+    t++
+    set f(i) = t   // i's finishing time
+
+    
+    
+    
+    
     def add_arc(self, arc):
         # TODO: reorganize data-structure
         """
@@ -108,3 +133,12 @@ class MyDiGraph(object):
     @property
     def arcs(self):
         return self._arcs
+
+
+
+
+
+
+    @property
+    def reversed_graph(self):
+        return self._reversed

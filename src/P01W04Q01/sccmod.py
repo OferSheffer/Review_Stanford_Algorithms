@@ -14,15 +14,14 @@ positive integers from 1 to 875714. Every row indicates an edge, the vertex
 label in first column is the tail and the vertex label in second column is the
 head (recall the graph is directed, and the edges are directed from the first
 column vertex to the second column vertex). So for example, the 11th row looks
-liks : "2 47646". This just means that the vertex with label 2 has an outgoing
+like : "2 47646". This just means that the vertex with label 2 has an outgoing
 edge to the vertex with label 47646
 
-Your task is to code up the algorithm from the video lectures for computing
-strongly connected components (SCCs), and to run this algorithm on the given
-graph. 
+Code up the algorithm from the video lectures for computing strongly connected
+components (SCCs), and run this algorithm on the given graph.
 
-Output Format: You should output the sizes of the 5 largest SCCs in the given
-graph, in decreasing order of sizes, separated by commas (avoid any spaces).
+Output Format: output the sizes of the 5 largest SCCs in the given graph, in
+decreasing order of sizes, separated by commas (avoid any spaces).
 So if your algorithm computes the sizes of the five largest SCCs to be
 500, 400, 300, 200 and 100, then your answer should be "500,400,300,200,100".
 If your algorithm finds less than 5 SCCs, then write 0 for the remaining terms.
@@ -65,6 +64,25 @@ class SccMod(mgm.MyDiGraph):
     def __init__(self):
         super().__init__()
 
+    def topfive_scc_sizes(self):
+        """
+        1. Let Grev = G with all arcs reversed 
+           [naively: Grev=new graph, smart: go backwards on original edges]
+        2. Run DFS-Loop on Grev  -- [Goal: compute “magical ordering” of nodes]
+           Let f(v) = “finishing time” of each v in V
+        3. Run DFS-Loop on G  --  [Goal: discovr the SCCs one-by-one]
+           Processing nodes in decreasing oder of finishing times
+           [SCCs = nodes with the same “leader”]
+        """
+
+        topfive = [0, 0, 0, 0, 0]
+        
+        # TODO: reverse graph
+        f_times = dfs_loop   # TODO
+        
+        
+        
+
     @staticmethod
     def init_graph_warcstrings(node_arcs_strings):
         """
@@ -99,6 +117,8 @@ class SccModTestCase(unittest.TestCase):
         self.assertEqual(sorted(list(my_graph.nodes)), [1, 2, 3, 4])
         self.assertEqual(sorted(list(my_graph.arcs)),
                          ['(1, 3)', '(1, 4)', '(2, 3)'])
+
+
 
 
 def main(file_name):
