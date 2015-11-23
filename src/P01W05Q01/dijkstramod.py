@@ -64,6 +64,40 @@ class ExtendedGraph(nx.Graph):
     [(1, 2)]
     """
 
+    def dijkstra(self, s):
+        """updates all nodes with shortest distance values from node s"""
+
+        # Initialize
+        A = [None]
+        A.extend([MAXDISTANCE]*len(self.nodes()))
+
+        X = [s]       # vertices processed so far
+        A[s] = 0      # computed shortest path distances
+
+        # Main Loop
+        V = self.nodes()
+        # TODO: does this condition compare the sets of nodes properly/quickly?
+        while X != V:
+            # among all edges (v, w) in E with v in X and w not in X
+            # pick the one that minimizes A[v]+l_vw
+            # using O(mn) implementation:
+            dijkstras_greedy = MAXDISTANCE
+            best_w = None
+            for v in X:
+                for neighbor_w in self.neighbors_iter(v):
+                    if neighbor_w not in X:
+                        # update cross border weights
+                        weight_edge_vw = self.edge[v][neighbor_w]['weight']
+                        A[neighbor_w] = min(
+                                            A[neighbor_w],
+                                            A[v]+weight_edge_vw)
+                        if A[neighbor_w] < dijkstras_greedy:
+                            dijkstras_greedy = A[neighbor_w]
+                            best_w = neighbor_w
+            X.append(best_w)
+            X=sorted(X)
+        return A
+
     @staticmethod
     def translate_data(line):
         split = line.split(maxsplit=1)
@@ -107,6 +141,7 @@ class ExtendedGraphTestCase(unittest.TestCase):
                          ["1 2 {'weight': 4.7}"])
 
     def test_init_weightedgraph_wstrings(self):
+        """also tests translate_data"""
         adjacency_data = [
                           "1    4,10    3,20",
                           "2    3,50",
@@ -124,6 +159,19 @@ class ExtendedGraphTestCase(unittest.TestCase):
                           "1 4 {'weight': 10}",
                           "2 3 {'weight': 50}"])
 
+    def test_dijkstra(self):
+        adjacency_data = [
+                          "1    4,10    3,20",
+                          "2    3,50",
+                          "3    1,20    2,50",
+                          "4    1,10"
+                          ]
+
+        my_graph = ExtendedGraph.init_weightedgraph_wstrings(adjacency_data)
+
+        A = my_graph.dijkstra(1)
+        self.assertEqual(A, [None, 0, 70, 20, 10])
+
 
 def main(file_name):
     # take values from file and run topfive_scc_sizes
@@ -135,9 +183,13 @@ def main(file_name):
         node_data_strings = [line.strip() for line in fh]
         my_graph = ExtendedGraph.init_weightedgraph_wstrings(node_data_strings)
 
-        topfive = my_graph.topfive_scc_sizes()
+        A = my_graph.dijkstra(1)
+        str_ = ",".join(map(str,
+                            [A[i] for i in
+                             (7, 37, 59, 82, 99, 115, 133, 165, 188, 197)]
+                            ))
 
-        print(topfive)
+        print(str_)
 
 
 if __name__ == '__main__':
