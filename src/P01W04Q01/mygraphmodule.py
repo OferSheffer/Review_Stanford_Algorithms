@@ -90,14 +90,16 @@ class MyDiGraph(object):
                 s = len(self.nodes.keys())-i
                 DFS(self, i)
                 
-DFS(graph G, node i):
-    mark i as explored   // for rest of calling DFS-Loop function
-    set leader(i) = node s
-    for every arc (i, j) in G:
-        if j not yet explored:
-            DFS(G, j)
-    t++
-    set f(i) = t   // i's finishing time
+
+# TODO: DFS
+# DFS(graph G, node i):
+#     mark i as explored   // for rest of calling DFS-Loop function
+#     set leader(i) = node s
+#     for every arc (i, j) in G:
+#         if j not yet explored:
+#             DFS(G, j)
+#     t++
+#     set f(i) = t   // i's finishing time
 
     
     
