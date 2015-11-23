@@ -39,8 +39,90 @@ requires a heap that supports deletions, and you'll probably need to maintain
 some kind of mapping between vertices and their positions in the heap.
 '''
 
+import networkx as nx
+import sys
+import unittest
+
 MAXDISTANCE = 1000000
 
+
+class ExtendedGraph(nx.Graph):
+    """
+    Graph - graph class that implements an undirected graph.
+    It ignores multiple edges between two nodes.
+    It does allow self-loop edges between a node and itself.
+
+    Using netwrokx module:
+    -----
+    >>> import networkx as nx
+    >>> G=nx.Graph()
+    >>> G.add_edge(1,2)
+    >>> G.add_node(42)
+    >>> print(sorted(G.nodes()))
+    [1, 2, 42]
+    >>> print(sorted(G.edges()))
+    [(1, 2)]
+    """
+
+    @staticmethod
+    def translate_data(line):
+        split = line.split(maxsplit=1)
+        node = int(split[0])
+        node_connections_strings = split[1].split()
+        for i, str_ in enumerate(node_connections_strings):
+            node_connections_strings[i] = tuple(map(int, str_.split(",")))
+        return node, node_connections_strings
+
+    @staticmethod
+    def init_weightedgraph_wstrings(node_data_strings):
+        """
+        Initialize a new ExtendedGraph:
+        Accepts a list of strings, each holding information regarding
+        a single node (first element)
+        and its weighted connections (tuples, separated by spaces)
+        Returns a graph_object of type ExtendedGraph(nx.Graph)
+        Holding node, edge and weight information of the input data.
+        """
+        graph_object = ExtendedGraph()
+        # TODO: check that there is no duplicates
+        for line in node_data_strings:
+            node, node_connections = ExtendedGraph.translate_data(line)
+            for connection in node_connections:
+                graph_object.add_edge(node, connection[0],
+                                      weight=connection[1])
+        return graph_object
+
+
+class ExtendedGraphTestCase(unittest.TestCase):
+    """Tests for `rcontract_min_cut.py`"""
+
+    def test_networkx_module(self):
+        my_graph = ExtendedGraph()
+        my_graph.add_edge(1, 2, weight=4.7)
+        my_graph.add_node(42)
+        self.assertEqual(sorted(my_graph.nodes()), [1, 2, 42])
+        self.assertEqual(sorted(my_graph.edges()), [(1, 2)])
+        self.assertEqual(
+                         list(nx.generate_edgelist(my_graph)),
+                         ["1 2 {'weight': 4.7}"])
+
+    def test_init_weightedgraph_wstrings(self):
+        adjacency_data = [
+                          "1    4,10    3,20",
+                          "2    3,50",
+                          "3    1,20    2,50",
+                          "4    1,10"
+                          ]
+
+        my_graph = ExtendedGraph.init_weightedgraph_wstrings(adjacency_data)
+
+        self.assertEqual(sorted(my_graph.nodes()), [1, 2, 3, 4])
+        self.assertEqual(sorted(my_graph.edges()), [(1, 3), (1, 4), (2, 3)])
+        self.assertEqual(
+                         list(nx.generate_edgelist(my_graph)),
+                         ["1 3 {'weight': 20}",
+                          "1 4 {'weight': 10}",
+                          "2 3 {'weight': 50}"])
 
 
 def main(file_name):
@@ -51,7 +133,7 @@ def main(file_name):
 
         # populate graph
         node_data_strings = [line.strip() for line in fh]
-        my_graph = ExtendedMultiGraph.init_graph_wstrings(node_data_strings)
+        my_graph = ExtendedGraph.init_weightedgraph_wstrings(node_data_strings)
 
         topfive = my_graph.topfive_scc_sizes()
 
