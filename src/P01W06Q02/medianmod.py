@@ -29,17 +29,41 @@ IMPLEMENTATION NOTES:
 
 '''
 
+import heapq
 import sys
 import unittest
 
+class StreamedMedian:
+    """
+    Heaps:
+    H_low: supports extract Max [get biggest of the smaller numbers]
+    H_high: supports extract Min
+    """
+    def __init__(self):
+        self._maxheap = []
+        self._minheap = []
+
+    def add_value(self, new_value):
+        if len(self._maxheap) <= len(self._minheap):
+            
+
+def streamed_median(data, new_value):
+    if not data:
+        data.append(new_value)
+        return new_value
 
 class MedianModTestCase(unittest.TestCase):
     """Tests for `twosum.py`"""
 
     def test_median(self):
         """init data"""
-        pass
-        # self.assertEqual(my_hashed_data, {-10, -20, 30, 21, 15})
+        data = []
+        new_value = 4
+        result = streamed_median(data, new_value)
+        self.assertEqual(data, [4])
+        self.assertEqual(result, 4)
+
+        new_value = 6
 
 
 def main(file_name):
