@@ -14,7 +14,7 @@ The file contains 1 million integers, both positive and negative
 with the ith row of the file specifying the ith entry of the array.
 Your task is to compute the number of target values t
 in the interval [-10000,10000] (inclusive) such that there are distinct
-numbers x,y in the input file that satisfy x+y=t.
+numbers x,y (x != y) in the input file that satisfy x+y=t.
 (NOTE: ensuring distinctness requires a one-line
  addition to the algorithm from lecture.)
 
@@ -32,14 +32,62 @@ IMPLEMENTATION NOTES:
 import sys
 import unittest
 
+_SORTED_ARRAY = False
+# _SORTED_ARRAY = True
+
+
+class ExtendedSet(set):
+    def twosum(self, t):
+        """
+        evaluates if distinct x,y (x != y) exist that make x+y=t
+        returns 1 if true, else 0"""
+        for x in self:
+            c = t-x
+            if (c in self) and (c != x):
+                return 1
+        return 0
+
 
 class TwoSumTestCase(unittest.TestCase):
     """Tests for `twosum.py`"""
 
-    def test_something(self):
+    def test_data_hashing(self):
         """init data"""
-        """self.assertEqual(operation, expected output)"""
-        raise NotImplementedError
+        test_input = "-10"+"\n" \
+                     "-20"+"\n" \
+                     "30"+"\n"  \
+                     "21"+"\n" \
+                     "15"+"\n" \
+                     "30"
+
+        my_hashed_data = set()
+        for num in map(int, test_input.split('\n')):
+            my_hashed_data.add(num)
+
+        self.assertEqual(my_hashed_data, {-10, -20, 30, 21, 15})
+
+    def test_twosum(self):
+        """init data"""
+        test_input = "-12"+"\n" \
+                     "-20"+"\n" \
+                     "5"+"\n" \
+                     "30"+"\n"  \
+                     "21"+"\n" \
+                     "15"+"\n" \
+                     "30"
+
+        my_hashed_data = ExtendedSet()
+        for num in map(int, test_input.split('\n')):
+            my_hashed_data.add(num)
+
+        self.assertEqual(my_hashed_data.twosum(9), 1)
+        self.assertEqual(my_hashed_data.twosum(51), 1)
+        self.assertEqual(my_hashed_data.twosum(12), 0)
+        self.assertEqual(my_hashed_data.twosum(5), 0,
+                         msg="set: {}".format(my_hashed_data))
+
+        my_hashed_data.add(0)
+        self.assertEqual(my_hashed_data.twosum(5), 1)
 
 
 def main(file_name):
@@ -49,10 +97,24 @@ def main(file_name):
             print((fh.readline()).strip())  # remove+show answer from test file
 
         # TODO: populate hash table
-        my_hashed_data = [line.strip() for line in fh]
-        xy_pairs = my_hashed_data.get_twosum(t)  # return x,y where x+y=t
+        my_hashed_data = ExtendedSet()
+        for line in fh:
+            my_hashed_data.add(int(line.strip()))
 
-        print("Number of distinct x,y pairs: {}".format(len(xy_pairs)))
+        # alternatively, populate a sorted array
+        if _SORTED_ARRAY:
+            my_sorted_data = [int(line.strip()) for line in fh]
+            my_sorted_data.sort()  # makes things faster for repeated 2-SUMs
+
+        xy_pairs = 0
+        for t in range(-10000, 10001):
+            if t % 1000 is 0:
+                print("t={}, xy_pairs={}".format(t, xy_pairs))
+            if xy_pairs is 46:
+                pass
+            xy_pairs += my_hashed_data.twosum(t)
+
+        print("Number of distinct x,y pairs: {}".format(xy_pairs))
 
 
 if __name__ == '__main__':
