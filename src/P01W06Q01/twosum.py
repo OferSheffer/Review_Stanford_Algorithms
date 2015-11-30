@@ -36,10 +36,27 @@ import unittest
 MIN_RANGE = -10000
 MAX_RANGE = 10000
 _SORTED_ARRAY = False
-_SORTED_ARRAY = True
+# _SORTED_ARRAY = True
 
 
 class ExtendedSet(set):
+    def ranged_twosum(self, MIN_RANGE, MAX_RANGE):
+        """
+        evaluate if distinct x,t (x != y) values exist
+        that make MIN_RANGE <= x + y <= MAX_RANGE
+        returns counter += 1 if true
+        """
+        counter = 0
+        t_table = set(range(MIN_RANGE, MAX_RANGE+1))
+        while self:
+            x = self.pop()
+            for y in self:
+                if x + y in t_table:
+                    counter += 1
+                    t_table.remove(x+y)
+        return counter
+
+
     def twosum(self, t):
         """
         evaluates if distinct x,y (x != y) exist that make x+y=t
@@ -56,6 +73,7 @@ def ranged_twosum(my_sorted_data, MIN_RANGE, MAX_RANGE):
     evaluates if distinct x,y (x != y) exist that make x+y=t
     returns 1 if true, else 0
     """
+    # TODO: rework this
     counter = 0
     direction = -1
     j = len(len(my_sorted_data)-1)
@@ -68,23 +86,13 @@ def ranged_twosum(my_sorted_data, MIN_RANGE, MAX_RANGE):
             break
 
         if direction == -1:
-            j = end_pos
+            # j = end_pos
             while y + x >= MIN_RANGE:
                 y = my_sorted_data[j]
 
                 if x + y <= MAX_RANGE:
                     counter += 1
-                
-                j
-                    
-                    
-                    
-        
-        
-        
-        
-        
-        
+
 #         if x < 0:
 #             for j in range(len(my_sorted_data)-1, i, -1):
 #                 y = my_sorted_data[j]
