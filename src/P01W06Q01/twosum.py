@@ -31,6 +31,11 @@ runtime is considerable. Multithreading eased it off a bit, but it is
 not great still.
 
 A sorted array based implementation can have a much smaller constant.
+Run index i up on data. Index j starts at the end and goes down and up like
+a pendulum while the joint values x+y fit the MAX/MIN values left in t-table.
+If a t value is noticed it is popped out to avoid duplication in the counts.
+Main advantage of this method – we don’t review many values that have no
+chance of being in the range.
 
 '''
 
