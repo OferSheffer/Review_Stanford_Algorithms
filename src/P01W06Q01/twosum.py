@@ -26,6 +26,11 @@ the chaining and open addressing approaches to resolving collisions.
 
 
 IMPLEMENTATION NOTES:
+Basic hash based implementation is O(k*n) with k = 20000 and n = 10E6
+runtime is considerable. Multithreading eased it off a bit, but it is
+not great still.
+
+A sorted array based implementation can have a much smaller constant.
 
 '''
 
@@ -39,122 +44,69 @@ _SORTED_ARRAY = False
 # _SORTED_ARRAY = True
 
 
-class ExtendedSet(set):
-    def ranged_twosum(self, MIN_RANGE, MAX_RANGE):
-        """
-        evaluate if distinct x,t (x != y) values exist
-        that make MIN_RANGE <= x + y <= MAX_RANGE
-        returns counter += 1 if true
-        """
-        counter = 0
-        t_table = set(range(MIN_RANGE, MAX_RANGE+1))
-        while self:
-            x = self.pop()
-            for y in self:
-                if x + y in t_table:
-                    counter += 1
-                    t_table.remove(x+y)
-        return counter
+def rangedown(s1_index):
+    return range(s1_index-1, -1, -1)
 
 
-    def twosum(self, t):
-        """
-        evaluates if distinct x,y (x != y) exist that make x+y=t
-        returns 1 if true, else 0"""
-        for x in self:
-            c = t-x
-            if (c in self) and (c != x):
-                return 1
-        return 0
-
-
-def ranged_twosum(my_sorted_data, MIN_RANGE, MAX_RANGE):
+def ranged_twosum(my_sorted_data, t_table):
     """
-    evaluates if distinct x,y (x != y) exist that make x+y=t
-    returns 1 if true, else 0
+    evaluate if distinct x,t (x != y) values exist
+    that make x + y = t (one pair per t), counter += 1 if true
     """
-    # TODO: rework this
     counter = 0
-    direction = -1
-    j = len(len(my_sorted_data)-1)
-    y = my_sorted_data[j]
-    for i in range(0, len(my_sorted_data)-1):
-        if i % 500 == 0:
-            print("i index: {}, counter: {}".format(i, counter))
-        x = my_sorted_data[i]
-        if x > MAX_RANGE:
-            break
+    len_ = len(my_sorted_data)
+    s1_index = len_
+    s2_index = 0
 
-        if direction == -1:
-            # j = end_pos
-            while y + x >= MIN_RANGE:
-                y = my_sorted_data[j]
-
-                if x + y <= MAX_RANGE:
-                    counter += 1
-
-#         if x < 0:
-#             for j in range(len(my_sorted_data)-1, i, -1):
-#                 y = my_sorted_data[j]
-#                 if y + x < MIN_RANGE or x == y:
-#                     break
-#                 elif x + y <= MAX_RANGE:
-#                     counter += 1
-#         else:  # x >= 0
-#             if x > MAX_RANGE:
-#                 break
-#             for j in range(i+1, len(my_sorted_data)):
-#                 y = my_sorted_data[j]
-#                 if y + x > MAX_RANGE or x == y:
-#                     break
-#                 elif x + y <= MAX_RANGE:
-#                     counter += 1
-    return counter
-
-
-class TwoSumTestCase(unittest.TestCase):
-    """Tests for `twosum.py`"""
-
-    def test_data_hashing(self):
-        """init data"""
-        test_input = "-10"+"\n" \
-                     "-20"+"\n" \
-                     "30"+"\n"  \
-                     "21"+"\n" \
-                     "15"+"\n" \
-                     "30"
-
-        my_hashed_data = set()
-        for num in map(int, test_input.split('\n')):
-            my_hashed_data.add(num)
-
-        self.assertEqual(my_hashed_data, {-10, -20, 30, 21, 15})
-
-    def test_twosum(self):
-        """init data"""
-        test_input = "-12"+"\n" \
-                     "-20"+"\n" \
-                     "5"+"\n" \
-                     "30"+"\n"  \
-                     "21"+"\n" \
-                     "15"+"\n" \
-                     "30"
-
-        my_hashed_data = ExtendedSet()
-        for num in map(int, test_input.split('\n')):
-            my_hashed_data.add(num)
-
-        self.assertEqual(my_hashed_data.twosum(9), 1)
-        self.assertEqual(my_hashed_data.twosum(51), 1)
-        self.assertEqual(my_hashed_data.twosum(12), 0)
-        self.assertEqual(my_hashed_data.twosum(5), 0,
-                         msg="set: {}".format(my_hashed_data))
-
-        my_hashed_data.add(0)
-        self.assertEqual(my_hashed_data.twosum(5), 1)
-
-
-
+    # t_table[0] = LOCAL_MIN
+    # t_table[-1] = LOCAL_MAX
+    while t_table:
+        for i, x in enumerate(my_sorted_data):
+            if x*2 >= t_table[-1] or i == len_-1:
+                t_table.clear()
+                return counter
+            if i % 2 == 0:
+                # j index goes down
+                for j in rangedown(s1_index):
+                    if j <= i:
+                        s1_index = len_
+                        s2_index = j+1
+                        break
+                    y = my_sorted_data[j]
+                    if y*2 <= t_table[0]:
+                        t_table.clear()
+                        break
+                    elif x + y <= t_table[0]:
+                        s1_index = len_
+                        s2_index = j+1
+                        break
+                    # else:
+                    if t_table[0] <= x + y <= t_table[-1]:
+                        try:
+                            t_table.remove(x+y)
+                            counter += 1
+                            if not t_table:
+                                return counter
+                        except:
+                            pass
+            else:  # i % 2 != 0:
+                # j index goes up
+                for j in range(max(s2_index, i+1), s1_index):
+                    y = my_sorted_data[j]
+                    if x + y >= t_table[-1]:
+                        # TODO: there are out of range index concerns
+                        s1_index = j-1
+                        s2_index = i+1
+                        break
+                    # else:
+                    if t_table[0] <= x + y <= t_table[-1]:
+                        try:
+                            t_table.remove(x+y)
+                            counter += 1
+                            if not t_table:
+                                return counter
+                        except:
+                            pass
 
 
 def main(file_name):
@@ -163,40 +115,19 @@ def main(file_name):
         if file_name[:4] == 'test':
             print((fh.readline()).strip())  # remove+show answer from test file
 
-        if not _SORTED_ARRAY:
-            # populate hash table
-            my_hashed_data = ExtendedSet()
-            for line in fh:
-                my_hashed_data.add(int(line.strip()))
+        # remove duplicates via set() datatype
+        my_hashed_data = set()
+        for line in fh:
+            my_hashed_data.add(int(line.strip()))
+        my_sorted_data = list(my_hashed_data)
+        my_sorted_data.sort()
+        print("sorted")
 
-        # alternatively, populate a sorted array
-        if _SORTED_ARRAY:
-            my_hashed_data = set()
-            for line in fh:
-                my_hashed_data.add(int(line.strip()))
-            my_sorted_data = list(my_hashed_data)
-            my_sorted_data = sorted(my_sorted_data)  # makes things faster for repeated 2-SUMs
-            print("sorted")
+        t_table = [x for x in range(MIN_RANGE, MAX_RANGE+1)]
+        xy_pairs = ranged_twosum(my_sorted_data, t_table)
 
-        # suggested threaded solution - still slow for hashed data
-#         t = [x for x in range(-10000, 10001)]
-#         pool = Pool(8)
-#         result = pool.map(my_hashed_data.twosum, t)
-#         # pool.join()
-#         print (sum(result))
-
-        xy_pairs = 0
-        if not _SORTED_ARRAY:
-            for t in range(MIN_RANGE, MAX_RANGE+1):
-                if t % 1000 is 0:
-                    print("t={}, xy_pairs={}".format(t, xy_pairs))
-                xy_pairs += my_hashed_data.twosum(t)
-
-        # alternatively, work with a sorted array
-        if _SORTED_ARRAY:
-            xy_pairs += ranged_twosum(my_sorted_data, MIN_RANGE, MAX_RANGE)
-
-        print("Number of distinct x,y pairs: {}".format(xy_pairs))
+        print("Number of t values matched"
+              " by distinct x,y pairs: {}".format(xy_pairs))
 
 
 if __name__ == '__main__':
