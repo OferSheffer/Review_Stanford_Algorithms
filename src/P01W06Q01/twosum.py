@@ -67,9 +67,14 @@ def ranged_twosum(my_sorted_data, t_table):
     # t_table[-1] = LOCAL_MAX
     while t_table:
         for i, x in enumerate(my_sorted_data):
+            # left side reviewed up to point where elements are too big
             if x*2 >= t_table[-1] or i == len_-1:
                 t_table.clear()
                 return counter
+
+            # j index going down
+            # TODO: rework this without 'range' or 'rangedown'
+            # while x + y >= t_table[-1] and j > i: j -= 1
             if i % 2 == 0:
                 # j index goes down
                 for j in rangedown(s1_index):
@@ -94,6 +99,8 @@ def ranged_twosum(my_sorted_data, t_table):
                                 return counter
                         except:
                             pass
+            # j index going up
+            # while x + y <= t_table[0] and j < len_: j += 1
             else:  # i % 2 != 0:
                 # j index goes up
                 for j in range(max(s2_index, i+1), s1_index):
