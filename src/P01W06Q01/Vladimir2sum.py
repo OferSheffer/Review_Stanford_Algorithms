@@ -2,6 +2,14 @@
 Created on 2015
 
 @author: Vladimir Lyutin
+
+Review notes by Ofer:
+- intv maintains max+mix assuming all in between values are desirable.
+- using arrt makes it faster to save t values with low memory cost
+- I reworked `arr[i] > 0` to `arr[i]*2 > intv[1]`:
+  original fails in case data is not evenly distributed.
+
+
 '''
 
 arr = set()

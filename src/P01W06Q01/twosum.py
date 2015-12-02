@@ -61,7 +61,6 @@ def ranged_twosum(sorray, range_table):
     """
     counter = 0
     len_ = len(sorray)
-    bottom_idx = 0
     top_idx = len_
 
     # range_table[0]/[1] - local minimum/maximum
