@@ -11,16 +11,21 @@ Review notes by Ofer:
 
 
 '''
+import time
 
+start = time.time()
 arr = set()
 
 file = open('algo1_programming_prob_2sum.txt', 'r')
 for line in file:
     arr.add(int(line.rstrip()))
 file.close()
+print('input file read finish \t@%.3f' % (time.time()-start))
 
 arr = list(arr)
 arr.sort()
+
+print('input sort finish \t@%.3f' % (time.time()-start))
 
 intv = [-10000, 10000]
 arrt = set()
@@ -36,4 +41,5 @@ for i in range(0, len(arr)):
             arrt.add(arr[i] + arr[j])
         j -= 1
 
+print('computation finished \t@%.3f' % (time.time()-start))
 print(len(arrt))

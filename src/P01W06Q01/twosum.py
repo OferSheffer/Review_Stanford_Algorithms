@@ -40,6 +40,7 @@ chance of being in the range.
 '''
 
 import sys
+import time
 import unittest
 # from multiprocessing import Pool
 
@@ -95,6 +96,7 @@ def ranged_twosum(sorray, range_table):
 
 
 def main(file_name):
+    start = time.time()
     # take values from file and run topfive_scc_sizes
     with open(file_name) as fh:
         if file_name[:4] == 'test':
@@ -106,13 +108,14 @@ def main(file_name):
             my_hashed_data.add(int(line.strip()))
         my_sorted_data = list(my_hashed_data)
         my_sorted_data.sort()
-        print("sorted")
+    print('input file read+sort finish \t@%.3f' % (time.time()-start))
 
-        range_table = [x for x in range(MIN_RANGE, MAX_RANGE+1)]
-        xy_pairs = ranged_twosum(my_sorted_data, range_table)
+    range_table = [x for x in range(MIN_RANGE, MAX_RANGE+1)]
+    xy_pairs = ranged_twosum(my_sorted_data, range_table)
 
-        print("Number of t values matched"
-              " by distinct x,y pairs: {}".format(xy_pairs))
+    print('computation finished \t@%.3f' % (time.time()-start))
+    print("Number of t values matched"
+          " by distinct x,y pairs: {}".format(xy_pairs))
 
 
 if __name__ == '__main__':
