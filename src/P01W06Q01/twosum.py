@@ -47,8 +47,9 @@ MIN_RANGE = -10000
 MAX_RANGE = 10000
 
 
-def rangedown(s1_index):
-    return range(s1_index-1, -1, -1)
+def rangedown(length):
+    """range: from top-1 to 0"""
+    return range(length-1, -1, -1)
 
 
 def ranged_twosum(my_sorted_data, t_table):
@@ -64,31 +65,45 @@ def ranged_twosum(my_sorted_data, t_table):
     # t_table[0] - local minimum , t_table[-1] = local maximum
     while t_table:
         for i, x in enumerate(my_sorted_data):
-            # left side reviewed, future elements are too big
-            if x*2 >= t_table[-1] or i == len_-1:
+            if x*2 >= t_table[-1] or i == len_-1:  # too big
                 t_table.clear()
                 return counter
 
             # j index going down
             if i % 2 == 0:
-                # j index goes down
                 for j in rangedown(top_idx):
                     if j <= i:
-                        # TODO - review this
-                        top_idx = len_
-                        bottom_idx = j+1
+                        bottom_idx = j+2  # TODO: index concerns
                         break
                     y = my_sorted_data[j]
-                    # right side reviewed, future elements are too small
-                    if y*2 <= t_table[0]:
-                        t_table.clear()
-                        break
-                    elif x + y < t_table[0]:
-                        top_idx = len_
+                    if x + y < t_table[0]:  # too small
                         bottom_idx = j+1
                         break
-                    # else:
-                    if t_table[0] <= x + y <= t_table[-1]:
+                    elif t_table[0] <= x + y <= t_table[-1]:  # in range
+                            try:
+                                t_table.remove(x+y)  # Note: slow idea
+                                counter += 1
+                                if not t_table:
+                                    return counter
+                            except:
+                                pass
+                    else:  # x + y > t_table[-1]
+                        continue
+
+            # j index going up
+            else:  # i % 2 != 0:
+                # j index goes up
+                for j in range(max(bottom_idx, i+1), top_idx):
+                    y = my_sorted_data[j]
+                    if x + y > t_table[-1]:  # too big
+                        xplus = my_sorted_data[i+1]
+                        while(j <= len_ and xplus + y <= t_table[-1]):
+                            y = my_sorted_data[j]
+                            j += 1
+                        top_idx = j-1
+                        bottom_idx = max(bottom_idx, i+2)  # TODO: index concerns
+                        break
+                    elif t_table[0] <= x + y <= t_table[-1]:  # in range
                         try:
                             t_table.remove(x+y)  # Note: slow idea
                             counter += 1
@@ -96,25 +111,8 @@ def ranged_twosum(my_sorted_data, t_table):
                                 return counter
                         except:
                             pass
-            # j index going up
-            else:  # i % 2 != 0:
-                # j index goes up
-                for j in range(max(bottom_idx, i+1), top_idx):
-                    y = my_sorted_data[j]
-                    if x + y >= t_table[-1]:
-                        # TODO: there are out of range index concerns
-                        top_idx = j-1
-                        bottom_idx = i+1
-                        break
-                    # else:
-                    if t_table[0] <= x + y <= t_table[-1]:
-                        try:
-                            t_table.remove(x+y)
-                            counter += 1
-                            if not t_table:
-                                return counter
-                        except:
-                            pass
+                    else:  # x + y < t_table[0]
+                        continue
 
 
 def main(file_name):
