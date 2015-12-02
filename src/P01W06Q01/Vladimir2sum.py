@@ -19,7 +19,7 @@ arrt = set()
 
 j = len(arr) - 1
 for i in range(0, len(arr)):
-    if arr[i] > 0 or j < 0:
+    if arr[i]*2 > intv[1] or j < 0:
         break
     while (j < len(arr) - 1) and (intv[1] >= arr[i] + arr[j]):
         j += 1

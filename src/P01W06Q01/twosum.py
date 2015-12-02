@@ -52,67 +52,47 @@ def rangedown(length):
     return range(length-1, -1, -1)
 
 
-def ranged_twosum(my_sorted_data, t_table):
+def ranged_twosum(sorray, range_table):
     """
+    sorray - sorted array
+    range_table - list of t values
     evaluate if distinct x,t (x != y) values exist
     that make x + y = t (one pair per t), counter += 1 if true
     """
     counter = 0
-    len_ = len(my_sorted_data)
+    len_ = len(sorray)
     bottom_idx = 0
     top_idx = len_
 
-    # t_table[0] - local minimum , t_table[-1] = local maximum
-    while t_table:
-        for i, x in enumerate(my_sorted_data):
-            if x*2 >= t_table[-1] or i == len_-1:  # too big
-                t_table.clear()
+    # range_table[0]/[1] - local minimum/maximum
+    j = top_idx - 1
+    while range_table:
+        for i in range(len_):
+            if (sorray[i]*2 >= range_table[-1] or
+                    i == len_):  # too big
+                range_table.clear()
                 return counter
 
-            # j index going down
-            if i % 2 == 0:
-                for j in rangedown(top_idx):
-                    if j <= i:
-                        bottom_idx = j+2  # TODO: index concerns
-                        break
-                    y = my_sorted_data[j]
-                    if x + y < t_table[0]:  # too small
-                        bottom_idx = j+1
-                        break
-                    elif t_table[0] <= x + y <= t_table[-1]:  # in range
-                            try:
-                                t_table.remove(x+y)  # Note: slow idea
-                                counter += 1
-                                if not t_table:
-                                    return counter
-                            except:
-                                pass
-                    else:  # x + y > t_table[-1]
-                        continue
+            j = top_idx-1
 
-            # j index going up
-            else:  # i % 2 != 0:
-                # j index goes up
-                for j in range(max(bottom_idx, i+1), top_idx):
-                    y = my_sorted_data[j]
-                    if x + y > t_table[-1]:  # too big
-                        xplus = my_sorted_data[i+1]
-                        while(j <= len_ and xplus + y <= t_table[-1]):
-                            y = my_sorted_data[j]
-                            j += 1
-                        top_idx = j-1
-                        bottom_idx = max(bottom_idx, i+2)  # TODO: index concerns
-                        break
-                    elif t_table[0] <= x + y <= t_table[-1]:  # in range
-                        try:
-                            t_table.remove(x+y)  # Note: slow idea
-                            counter += 1
-                            if not t_table:
-                                return counter
-                        except:
-                            pass
-                    else:  # x + y < t_table[0]
-                        continue
+            # j index goes down
+            while sorray[i] + sorray[j] > range_table[-1]:
+                j -= 1
+            top_idx = j+1  # memo largest j for net i iter
+            while sorray[i] + sorray[j] <= range_table[-1]:
+                if (sorray[i] + sorray[j] >= range_table[0]):  # in range
+                    try:
+                        range_table.remove(sorray[i] +
+                                           sorray[j])  # Note: slow idea
+                        counter += 1
+                        if not range_table:
+                            return counter
+                    except:
+                        pass
+                    j -= 1
+                    continue
+                else:  # too small, < range_table[0] (time to go up)
+                    break
 
 
 def main(file_name):
@@ -129,8 +109,8 @@ def main(file_name):
         my_sorted_data.sort()
         print("sorted")
 
-        t_table = [x for x in range(MIN_RANGE, MAX_RANGE+1)]
-        xy_pairs = ranged_twosum(my_sorted_data, t_table)
+        range_table = [x for x in range(MIN_RANGE, MAX_RANGE+1)]
+        xy_pairs = ranged_twosum(my_sorted_data, range_table)
 
         print("Number of t values matched"
               " by distinct x,y pairs: {}".format(xy_pairs))
