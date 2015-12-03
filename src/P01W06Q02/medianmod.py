@@ -158,7 +158,6 @@ def main(file_name):
         if file_name[:4] == 'test':
             print((fh.readline()).strip())  # remove+show answer from test file
 
-        result = 0
         medians = []
 
         data = StreamedMedian()
