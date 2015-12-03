@@ -33,37 +33,123 @@ import heapq
 import sys
 import unittest
 
-class StreamedMedian:
+
+class StreamedMedian(object):
     """
     Heaps:
     H_low: supports extract Max [get biggest of the smaller numbers]
     H_high: supports extract Min
     """
     def __init__(self):
-        self._maxheap = []
-        self._minheap = []
+        self._left = []   # TODO: test max heap
+        self._right = []  # TODO: test min_heap
+        self._offset = 0  # len(right) - len(left)
+        self._median = None
 
     def add_value(self, new_value):
-        if len(self._maxheap) <= len(self._minheap):
-            
+        if not self.median:
+            self.median = new_value
+            self.addleft(new_value)
+        # else:
+        elif self._offset == 0:  # even lengths
+            if new_value <= self.minright:
+                self.addleft(new_value)
+                if new_value > self.median:
+                    self.median = new_value
+            else:
+                self.addleft(self.pushpopright(new_value))
+                self.median = self.maxleft
 
-def streamed_median(data, new_value):
-    if not data:
-        data.append(new_value)
-        return new_value
+        elif self._offset == -1:  # left side bigger by 1
+            if new_value < self.median:
+                self.addright(self.pushpopleft(new_value))
+                self.median = self.maxleft
+            else:
+                self.addright(new_value)
+        else:
+            print("offset error")
+            sys.exit()
+
+    def addleft(self, val):
+        heapq.heappush(self._left, val)
+        heapq._heapify_max(self._left)
+        self._offset -= 1
+
+    def addright(self, val):
+        heapq.heappush(self._right, val)
+        self._offset += 1
+
+    def pushpopleft(self, val):
+        # self._offset += 1
+        return heapq._heappushpop_max(self._left, val)
+
+    def pushpopright(self, val):
+        # self._offset -= 1
+        return heapq.heappushpop(self._right, val)
+
+    @property
+    def maxleft(self):
+        return self._left[0]
+
+    @property
+    def minright(self):
+        return self._right[0]
+
+    @property
+    def median(self):
+        return self._median
+
+    @median.setter
+    def median(self, val):
+        self._median = val
+
+    def __len__(self):
+        return len(self._left) + len(self._right)
+
+    def __str__(self):
+        d = heapq.nsmallest(len(self._left), self._left)
+        if len(self._right) > 0:
+            d.extend(heapq.nsmallest(len(self._right), self._right))
+        return repr(d)
+
 
 class MedianModTestCase(unittest.TestCase):
     """Tests for `twosum.py`"""
 
     def test_median(self):
         """init data"""
-        data = []
+        data = StreamedMedian()
+        medians = []
         new_value = 4
-        result = streamed_median(data, new_value)
-        self.assertEqual(data, [4])
-        self.assertEqual(result, 4)
+        data.add_value(new_value)
+        medians.append(data.median)
+        self.assertEqual(str(data), '[4]')
+        self.assertEqual(medians, [4])
 
         new_value = 6
+        data.add_value(new_value)
+        medians.append(data.median)
+        self.assertEqual(str(data), '[4, 6]')
+        self.assertEqual(medians, [4, 4])
+
+        new_value = 7
+        data.add_value(new_value)
+        medians.append(data.median)
+        self.assertEqual(str(data), '[4, 6, 7]')
+        self.assertEqual(medians, [4, 4, 6])
+
+        new_values = [10, 5, 2, 4, 8, -1, 0]
+        for val in new_values:
+            data.add_value(val)
+            medians.append(data.median)
+        self.assertEqual(str(data), '[-1, 0, 2, 4, 4, 5, 6, 7, 8, 10]')
+        """
+        '[4, 6, 7]'--10-->'[4, 6, 7, 10]'--5-->'[4, 5, 6, 7, 10]'
+        --2-->'[2, 4, 5, 6, 7, 10]'--4-->'[2, 4, 4, 5, 6, 7, 10]'
+        --8-->'[2, 4, 4, 5, 6, 7, 8, 10]'--1-->'[-1, 2, 4, 4, 5, 6, 7, 8, 10]'
+        --0-->'[-1, 0, 2, 4, 4, 5, 6, 7, 8, 10]'
+        """
+        self.assertEqual(medians, [4, 4, 6, 6, 6, 5, 5, 5, 5, 4])
 
 
 def main(file_name):
@@ -73,12 +159,17 @@ def main(file_name):
             print((fh.readline()).strip())  # remove+show answer from test file
 
         result = 0
-        data = []
+        medians = []
+
+        data = StreamedMedian()
         for line in fh:
             new_value = int(line.strip())
-            result += streamed_median(data, new_value)
+            data.add_value(new_value)
+            medians.append(data.median)
 
-        print("Number of distinct x,y pairs: {}".format(result))
+        result = sum(medians) % 10000
+
+        print("sum(medians) % 10000: {}".format(result))
 
 
 if __name__ == '__main__':
